@@ -18,9 +18,15 @@ namespace minimap
 	{
 		if (worldtravel::IsLibertyCity())
 		{
+			/*if (INTERIOR::GET_INTERIOR_FROM_ENTITY(PLAYER::PLAYER_PED_ID()) == INTERIOR::GET_INTERIOR_AT_COORDS(4797.335f, -2851.378f, 5.098513f)) // e2_gayclub
+			{
+				return;
+			}*/
+
 			UI::SET_RADAR_AS_EXTERIOR_THIS_FRAME();
 			UI::SET_RADAR_AS_INTERIOR_THIS_FRAME(GAMEPLAY::GET_HASH_KEY("v_fakelibertycity"), LibertyCityGFXPos[0], LibertyCityGFXPos[1], 0, 0);
 		}
+
 	}
 
 	static void MinimapMain()

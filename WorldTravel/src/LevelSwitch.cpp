@@ -17,6 +17,7 @@
 
 namespace levelSwitch
 {
+
 	// Streaming Data Index
 	int LibertyCityScenariosIndex;
 	int LibertyCityZonesIndex;
@@ -27,6 +28,9 @@ namespace levelSwitch
 	int ModIPLsIndex;
 
 	// Streaming Data References
+	bool loadLibertyLODLights;
+	bool restrictedAreaClearance;
+	int tpKey;
 	std::vector<std::string> libertyScenarios;
 	std::vector<std::string> libertyZones;
 	std::vector<std::string> libertyAmbientZones;
@@ -190,6 +194,7 @@ namespace levelSwitch
 	std::vector<float> ba_dlc_int_03_ba =		{ -1421.015f, -3012.587f, -80.0f };
 	std::vector<float> h4_interior_0_int_sub =	{ 1560.0f, 400.0f, -50.0f };
 	std::vector<float> dlc_int_01_xm3 =			{ 485.0f, -2625.0f, -50.0f };
+	std::vector<float> dlc_int_01_m23_1 =		{ -880.0f, -2770.0f, -50.0f };
 	bool tempWaterSwapActive = false;
 	bool hasCayoLoadedExternally = false;
 
@@ -351,6 +356,8 @@ namespace levelSwitch
 			int zoneId = ZONE::GET_ZONE_FROM_NAME_ID((char*)cayoZones[i].c_str());
 			ZONE::SET_ZONE_ENABLED(zoneId, false);
 		}
+		if (restrictedAreaClearance)
+			GAMEPLAY::TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME((char*)"restrictedareas");		   // responsible for restricted areas
 	}
 
 	void CreateBlips()
@@ -581,7 +588,17 @@ namespace levelSwitch
 	// Fix for interiors being flooded
 	void InteriorWaterFix()
 	{
-		int playerInteriorId = INTERIOR::GET_INTERIOR_FROM_ENTITY(player);
+		//int playerInteriorId = INTERIOR::GET_INTERIOR_FROM_ENTITY(player);
+		Vector3 cameraCoords;
+		if (CAM::IS_GAMEPLAY_CAM_RENDERING())
+			cameraCoords = CAM::GET_GAMEPLAY_CAM_COORD();
+		else
+			cameraCoords = CAM::GET_CAM_COORD(CAM::GET_RENDERING_CAM());
+		float cameraCoordsX = cameraCoords.x;
+		float cameraCoordsY = cameraCoords.y;
+		float cameraCoordsZ = cameraCoords.z;
+		int playerInteriorId = INTERIOR::GET_INTERIOR_AT_COORDS(cameraCoordsX, cameraCoordsY, cameraCoordsZ);
+		
 		if (!worldtravel::IsLosSantos())
 		{
 			if ((playerInteriorId == INTERIOR::GET_INTERIOR_AT_COORDS(gr_grdlc_int_01[0], gr_grdlc_int_01[1], gr_grdlc_int_01[2]) ||
@@ -589,7 +606,8 @@ namespace levelSwitch
 				playerInteriorId == INTERIOR::GET_INTERIOR_AT_COORDS(xm_x17dlc_int_sub[0], xm_x17dlc_int_sub[1], xm_x17dlc_int_sub[2]) ||
 				playerInteriorId == INTERIOR::GET_INTERIOR_AT_COORDS(ba_dlc_int_03_ba[0], ba_dlc_int_03_ba[1], ba_dlc_int_03_ba[2]) ||
 				playerInteriorId == INTERIOR::GET_INTERIOR_AT_COORDS(h4_interior_0_int_sub[0], h4_interior_0_int_sub[1], h4_interior_0_int_sub[2]) ||
-				playerInteriorId == INTERIOR::GET_INTERIOR_AT_COORDS(dlc_int_01_xm3[0], dlc_int_01_xm3[1], dlc_int_01_xm3[2])) &&
+				playerInteriorId == INTERIOR::GET_INTERIOR_AT_COORDS(dlc_int_01_xm3[0], dlc_int_01_xm3[1], dlc_int_01_xm3[2]) ||
+				playerInteriorId == INTERIOR::GET_INTERIOR_AT_COORDS(dlc_int_01_m23_1[0], dlc_int_01_m23_1[1], dlc_int_01_m23_1[2])) &&
 				playerInteriorId != 0 &&
 				!tempWaterSwapActive)
 			{
@@ -600,7 +618,10 @@ namespace levelSwitch
 			else if (tempWaterSwapActive && playerInteriorId == 0)
 			{
 				//WAIT(1000);
-				STREAMING::LOAD_GLOBAL_WATER_FILE(2);
+				if (worldtravel::IsCayoPerico())
+					STREAMING::LOAD_GLOBAL_WATER_FILE(1);
+				else if (worldtravel::IsLibertyCity())
+					STREAMING::LOAD_GLOBAL_WATER_FILE(2);
 				tempWaterSwapActive = false;
 				if (NETWORK::NETWORK_IS_IN_SESSION())
 				{
@@ -1100,7 +1121,7 @@ namespace levelSwitch
 		{
 			requestIpls(libertySpIpls);
 		}
-		if (Settings::EnableLibertyCityLODLights)
+		if (loadLibertyLODLights)
 		{
 			requestIpls(libertyLODLightIpls);
 		}
@@ -1111,6 +1132,7 @@ namespace levelSwitch
 		if (!NETWORK::NETWORK_IS_IN_SESSION())
 		{
 			GAMEPLAY::SET_WEATHER_TYPE_NOW(const_cast<char*>(weatherTypes[weatherID].c_str()));
+			UI::_SET_MINIMAP_REVEALED(true);
 		}
 		
 		worldtravel::PathNodeState::SetPathNodeState(1);
@@ -1171,7 +1193,8 @@ namespace levelSwitch
 			RequestScript("blip_controller", 1424);        // responsible for blips
 			RequestScript("forsalesigns", 1424);           // responsible for property for sale signs
 			RequestScript("respawn_controller", 1424);     // responsible for respawning the player
-			RequestScript("restrictedareas", 1424);        // responsible for restricted areas
+			if (!restrictedAreaClearance)
+				RequestScript("restrictedareas", 1424);        // responsible for restricted areas
 			RequestScript("vehicle_gen_controller", 1424); // responsible for player businesses / vehicle blips
 		}
 	}
@@ -1363,6 +1386,7 @@ namespace levelSwitch
 	// Unload Liberty City
 	void unloadLiberty()
 	{
+		Settings::Load();
 		//STREAMING::SET_ISLAND_ENABLED(const_cast<char*>("LibertyCity"), false);
 		WAIT(1000);
 
@@ -1373,6 +1397,8 @@ namespace levelSwitch
 		else
 			removeIpls(libertySpIpls);
 
+		if (!NETWORK::NETWORK_IS_IN_SESSION())
+			UI::_SET_MINIMAP_REVEALED(false);
 
 		if (Settings::EnableLibertyCityLODLights)
 		{
@@ -1414,7 +1440,8 @@ namespace levelSwitch
 			GAMEPLAY::TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME((char*)"blip_controller");          // responsible for blips
 			GAMEPLAY::TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME((char*)"forsalesigns");			   // responsible for property for sale signs
 			GAMEPLAY::TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME((char*)"respawn_controller");	   // responsible for respawning the player
-			GAMEPLAY::TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME((char*)"restrictedareas");		   // responsible for restricted areas
+			if (!restrictedAreaClearance)
+				GAMEPLAY::TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME((char*)"restrictedareas");		   // responsible for restricted areas
 			GAMEPLAY::TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME((char*)"vehicle_gen_controller");   // responsible for player businesses / vehicle blips
 		}
 	}
@@ -1673,7 +1700,7 @@ namespace levelSwitch
 			GRAPHICS::DRAW_MARKER(1, -1050.53f, -2741.48f, 13.60f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.6f, 0.6f, 0.5f, 240, 200, 80, 150, false, false, 2, false, false, false, 0);
 			if (ENTITY::IS_ENTITY_AT_COORD(playerPed, LosSantosIntAirport[0], LosSantosIntAirport[1], LosSantosIntAirport[2], 1.0f, 1.0f, 1.0f, 0, 1, 0))
 			{
-				if (PLAYER::GET_PLAYER_WANTED_LEVEL(playerPed) == 0)
+				if (PLAYER::GET_PLAYER_WANTED_LEVEL(PLAYER::PLAYER_ID()) == 0)
 				{
 					worldtravel::HelpText::DisplayHelpText("Press ~INPUT_CONTEXT~ to fly to Liberty City or ~INPUT_CONTEXT_SECONDARY~ to North Yankton for $350.");
 					if (CONTROLS::IS_DISABLED_CONTROL_JUST_PRESSED(2, 51) || CONTROLS::IS_DISABLED_CONTROL_JUST_PRESSED(2, 52))
@@ -1794,7 +1821,7 @@ namespace levelSwitch
 			GRAPHICS::DRAW_MARKER(1, 7553.86f, -2879.39f, 5.08f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.6f, 0.6f, 0.5f, 240, 200, 80, 150, false, false, 2, false, false, false, 0);
 			if (ENTITY::IS_ENTITY_AT_COORD(playerPed, FrancisIntAirport[0], FrancisIntAirport[1], FrancisIntAirport[2], 1.0f, 1.0f, 1.0f, 0, 1, 0))
 			{
-				if (PLAYER::GET_PLAYER_WANTED_LEVEL(playerPed) == 0)
+				if (PLAYER::GET_PLAYER_WANTED_LEVEL(PLAYER::PLAYER_ID()) == 0)
 				{
 					worldtravel::HelpText::DisplayHelpText("Press ~INPUT_CONTEXT~ to fly to Los Santos or ~INPUT_CONTEXT_SECONDARY~ to North Yankton for $350.");
 					if (CONTROLS::IS_DISABLED_CONTROL_JUST_PRESSED(2, 51) || CONTROLS::IS_DISABLED_CONTROL_JUST_PRESSED(2, 52))
@@ -1919,7 +1946,7 @@ namespace levelSwitch
 				!ENTITY::IS_ENTITY_IN_AREA(playerPed, 3486.60f, -5099.23f, -10000.0f, 3747.66f, -4627.10f, 10000.0f, false, false, false) &&
 				!ENTITY::IS_ENTITY_IN_AREA(playerPed, 3747.66f, -5399.22f, -10000.0f, 5789.13f, -4657.80f, 10000.0f, false, false, false)))
 		{
-			if (PLAYER::GET_PLAYER_WANTED_LEVEL(playerPed) == 0)
+			if (PLAYER::GET_PLAYER_WANTED_LEVEL(PLAYER::PLAYER_ID()) == 0)
 			{
 				worldtravel::HelpText::DisplayHelpText("Press ~INPUT_CONTEXT~ to fly to Los Santos or ~INPUT_CONTEXT_SECONDARY~ to Liberty City for $350.");
 				if (CONTROLS::IS_DISABLED_CONTROL_JUST_PRESSED(2, 51) || CONTROLS::IS_DISABLED_CONTROL_JUST_PRESSED(2, 52))
@@ -2261,13 +2288,17 @@ namespace levelSwitch
 	void TeleportBetweenMaps()
 	{
 
-		if (IsKeyJustUp(Settings::TeleportKey))
+		if (IsKeyJustUp(tpKey))
 		{
 			Settings::Load();
 			if (Settings::FastTravel)
 			{
 				Entity player = playerPed;
 				int currentLocation = worldtravel::GetPlayerLocationID();
+				if (PED::IS_PED_IN_ANY_VEHICLE(player, 0))
+				{
+					player = PED::GET_VEHICLE_PED_IS_USING(player);
+				}
 				int destination = -1;
 
 				// Determine destination based on current location
@@ -2398,6 +2429,7 @@ namespace levelSwitch
 	{
 		CayoPericoIslandHopperHelper();
 		worldtravel::MpMap::CheckIfMPMapIsActive();
+		InteriorWaterFix();
 		AirportTravel();
 		DocksTravel();
 		TeleportBetweenMaps();
@@ -2424,8 +2456,11 @@ namespace levelSwitch
 
 	void LevelSwitchMain()
 	{
-		initialize();
 		Settings::Load();
+		loadLibertyLODLights = Settings::EnableLibertyCityLODLights;
+		restrictedAreaClearance = Settings::GrantAccessToRestrictedAreas;
+		tpKey = Settings::TeleportKey;
+		initialize();
 		while (true)
 		{
 			playerPed = PLAYER::PLAYER_ID();

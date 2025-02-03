@@ -6,12 +6,13 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <unordered_map>
 
 namespace shops
 {
 	int shopLocationID = 0;
 
-	// Blip Objects
+	// Liberty City Blip Objects
 	Blip ClukinBellAlgonquinBlip;
 	Blip ClukinBellDukesBlip;
 	Blip BurgerShotMemoryLanesBrokerBlip;
@@ -48,7 +49,9 @@ namespace shops
 	Blip TheMajesticCentralBlip;
 	Blip BankAlgonquinSouthBlip;
 
+	//North Yankton Blip Objects
 	Blip BankNorthYanktonBlip;
+
 
 	struct BlipData {
 		Blip& blip;
@@ -56,6 +59,31 @@ namespace shops
 		std::string name;
 		int sprite;
 	};
+
+	struct Location {
+		Vector3 coordinates;
+		float heading = 0.0f;
+	};
+
+	struct PayNSprayData {
+		std::string doorName;
+		std::string doorPropName;
+		std::vector<float> doorLocation;
+		std::string garage;
+	};
+
+	struct PayNSprayInfo {
+		PayNSprayData PayNSprayLocation;
+	};
+
+	// check if an entity is within a given distance
+	bool IsEntityAtLocation(Entity entity, float x, float y, float z, float radius) {
+		return ENTITY::IS_ENTITY_AT_COORD(
+			entity,
+			x, y, z,
+			radius, radius, radius, false, true, false
+		);
+	}
 
 	void CreateBlipIfNotExists(Blip& blip, const std::vector<float>& coords, const std::string& name, int sprite) {
 		if (!UI::DOES_BLIP_EXIST(blip)) {
@@ -198,6 +226,61 @@ namespace shops
 			shopLocationID = worldtravel::GetPlayerLocationID();
 	}
 
+	void ProcessPayNSpray(const PayNSprayInfo& info) {
+		Player playerPed = PLAYER::PLAYER_PED_ID();
+		Entity player = playerPed;
+
+		if (PED::IS_PED_IN_ANY_VEHICLE(player, false)) {
+			player = PED::GET_VEHICLE_PED_IS_USING(player);
+		}
+
+		if (!ENTITY::IS_ENTITY_DEAD(player) && IsEntityAtLocation(player, info.PayNSprayLocation.doorLocation[0], info.PayNSprayLocation.doorLocation[1], info.PayNSprayLocation.doorLocation[2], 15.0f))
+		{
+			if (!worldtravel::PayNSpray::IsPayNSprayActive(info.PayNSprayLocation.doorName))
+				worldtravel::PayNSpray::ActivatePayNSpray(info.PayNSprayLocation.doorName, info.PayNSprayLocation.doorPropName, info.PayNSprayLocation.doorLocation[0], info.PayNSprayLocation.doorLocation[1], info.PayNSprayLocation.doorLocation[2]);
+			worldtravel::PayNSpray::PayNSpray(info.PayNSprayLocation.doorName, info.PayNSprayLocation.garage);
+		}
+		else
+		{
+			if (worldtravel::PayNSpray::IsPayNSprayActive(info.PayNSprayLocation.doorName))
+				worldtravel::PayNSpray::DeactivatePayNSpray(info.PayNSprayLocation.doorName);
+		}
+	}
+
+	// spawn pay n sprays if near by
+	void SpawnPayNSprays(const std::unordered_map<std::string, PayNSprayData>& payNSprays, const std::vector<PayNSprayInfo>& payNSprayInfo) {
+		for (const auto& payNSprayLocation : payNSprayInfo) {
+			ProcessPayNSpray(payNSprayLocation);
+		}
+	}
+
+	void PayNSprays()
+	{
+		//Liberty City Pay N' Spray Garage Doors
+		if (worldtravel::IsLibertyCity())
+		{
+			// Liberty City marker locations
+			std::unordered_map<std::string, PayNSprayData> payNSpraysLC = {
+				{"BrokerPayNSpray",				{"BrokerPayNSpray", "bs3respraydoor", {6246.409f, -3546.857f, 22.31999f}, "Broker PayNSpray"}},
+				{"NorthAlgonquinPayNSpray",		{"NorthAlgonquinPayNSpray", "pspray_gdoor1_mh5", {4880.308f, -1711.296f,  21.25111f}, "North Algonquin PayNSpray"}},
+				{"WestAlgonquinPayNSpray",		{"WestAlgonquinPayNSpray", "pspray_gdoor1_mh3", {4674.543f, -2883.918f,  7.151477f}, "West Algonquin PayNSpray"}},
+				{"NorthAlderneyPayNSpray",		{"NorthAlderneyPayNSpray", "nj01axelsdoor", {4040.036f, -2075.698f,  18.15517f}, "North Alderney PayNSpray"}},
+				{"SouthAlderneyPayNSpray",		{"SouthAlderneyPayNSpray", "nj03pnsgrgdoor01", {3887.951f, -2978.066f,  11.88733f}, "South Alderney PayNSpray"}},
+			};
+
+			// Liberty City marker configurations
+			std::vector<PayNSprayInfo> payNSprayGaragesLC = {
+				{payNSpraysLC["BrokerPayNSpray"]},
+				{payNSpraysLC["NorthAlgonquinPayNSpray"]},
+				{payNSpraysLC["WestAlgonquinPayNSpray"]},
+				{payNSpraysLC["NorthAlderneyPayNSpray"]},
+				{payNSpraysLC["SouthAlderneyPayNSpray"]},
+			};
+			SpawnPayNSprays(payNSpraysLC, payNSprayGaragesLC);
+		}
+
+	}
+
 	void ShopsMain()
 	{
 		while (true)
@@ -205,6 +288,7 @@ namespace shops
 			CreateShopBlipsLC();
 			CreateShopBlipsNY();
 			ActiveBlipController();
+			PayNSprays();
 			WAIT(0);
 		}
 	}

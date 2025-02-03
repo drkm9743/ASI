@@ -10,6 +10,7 @@
 #include "Shops.h"
 #include "Respawn.h"
 #include "RespawnBlock.h"
+#include "RestrictedAreas.h"
 #include "keyboard.h"
 #include <mmdeviceapi.h>
 #include <endpointvolume.h>
@@ -211,6 +212,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         scriptRegister(hModule, Minimap);
         scriptRegister(hModule, Respawn);
         scriptRegister(hModule, RespawnBlock);
+        scriptRegister(hModule, RestrictedAreas);
         scriptRegister(hModule, Shops);
         keyboardHandlerRegister(OnKeyboardMessage);
         break;

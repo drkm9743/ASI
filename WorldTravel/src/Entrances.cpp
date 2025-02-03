@@ -55,9 +55,8 @@ namespace entrances
 
 	// handles player teleportation, and optionally clears wanted level, and sets player heading
     void TeleportPlayer(Entity player, const Location& dest, bool clearWanted) {
-        if (PLAYER::GET_PLAYER_WANTED_LEVEL(player) > 0 && clearWanted) {
-            PLAYER::SET_PLAYER_WANTED_LEVEL(player, 0, false);
-            PLAYER::SET_PLAYER_WANTED_LEVEL_NOW(player, false);
+        if (PLAYER::GET_PLAYER_WANTED_LEVEL(PLAYER::PLAYER_ID()) > 0 && clearWanted) {
+            PLAYER::CLEAR_PLAYER_WANTED_LEVEL(PLAYER::PLAYER_ID());
         }
         ENTITY::SET_ENTITY_COORDS_NO_OFFSET(
             player, dest.coordinates[0], dest.coordinates[1], dest.coordinates[2], false, false, true
@@ -160,6 +159,8 @@ namespace entrances
                 {"BruciePenthouseApartment",            {{5990.96f, -3107.44f,  29.01f},  239.0f}},
                 {"GayTonyPenthouseGround",              {{5113.54f, -3476.07f,  14.74f},  180.0f}},
                 {"GayTonyPenthouseApartment",           {{5117.27f, -3455.19f,  32.80f}, 100.34f}},
+                {"YusufAmierPenthouseGround",           {{5158.64f, -2463.73f,  14.95f},   90.0f}},
+                {"YusufAmierPenthouseApartment",        {{5178.48f, -2458.44f,  62.80f},    0.0f}},
             };
 
             // Liberty City marker configurations
@@ -180,37 +181,43 @@ namespace entrances
                  locationsLC["RichardsMajesticLobby"], locationsLC["RichardsMajestic30thFloor"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
 
                 {"Press ~INPUT_CONTEXT~ to take the lift to the lobby.",
-                 locationsLC["RichardsMajestic30thFloor"], locationsLC["RichardsMajesticLobby"], -1.0f, false, false},
+                 locationsLC["RichardsMajestic30thFloor"], locationsLC["RichardsMajesticLobby"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
 
                 {"Press ~INPUT_CONTEXT~ to take the lift to the apartment.",
-                 locationsLC["MiddleParkEastPenthouseLobby"], locationsLC["MiddleParkEastPenthouseApartment"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
+                 locationsLC["MiddleParkEastPenthouseLobby"], locationsLC["MiddleParkEastPenthouseApartment"], -1.0f, 0.6f, 0.5f, 1.0f, true, false},
 
                 {"Press ~INPUT_CONTEXT~ to take the lift to the lobby.",
                  locationsLC["MiddleParkEastPenthouseApartment"], locationsLC["MiddleParkEastPenthouseLobby"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
 
                 {"Press ~INPUT_CONTEXT~ to take the lift to the apartment.",
-                 locationsLC["NorthwoodPenthouseLobby"], locationsLC["NorthwoodPenthouseApartment"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
+                 locationsLC["NorthwoodPenthouseLobby"], locationsLC["NorthwoodPenthouseApartment"], -1.0f, 0.6f, 0.5f, 1.0f, true, false},
 
                 {"Press ~INPUT_CONTEXT~ to take the lift to the lobby.",
                  locationsLC["NorthwoodPenthouseApartment"], locationsLC["NorthwoodPenthouseLobby"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
 
                 {"Press ~INPUT_CONTEXT~ to take the lift to the penthouse.",
-                 locationsLC["TrumpTowerPenthouseGround"], locationsLC["TrumpTowerPenthouseApartment"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
+                 locationsLC["TrumpTowerPenthouseGround"], locationsLC["TrumpTowerPenthouseApartment"], -1.0f, 0.6f, 0.5f, 1.0f, true, false},
 
                 {"Press ~INPUT_CONTEXT~ to take the lift to the ground.",
                  locationsLC["TrumpTowerPenthouseApartment"], locationsLC["TrumpTowerPenthouseGround"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
 
                 {"Press ~INPUT_CONTEXT~ to take the lift to the apartment.",
-                 locationsLC["BruciePenthouseGround"], locationsLC["BruciePenthouseApartment"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
+                 locationsLC["BruciePenthouseGround"], locationsLC["BruciePenthouseApartment"], -1.0f, 0.6f, 0.5f, 1.0f, true, false},
 
                 {"Press ~INPUT_CONTEXT~ to take the lift to the ground.",
                  locationsLC["BruciePenthouseApartment"], locationsLC["BruciePenthouseGround"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
 
                 {"Press ~INPUT_CONTEXT~ to take the lift to the penthouse.",
-                 locationsLC["GayTonyPenthouseGround"], locationsLC["GayTonyPenthouseApartment"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
+                 locationsLC["GayTonyPenthouseGround"], locationsLC["GayTonyPenthouseApartment"], -1.0f, 0.6f, 0.5f, 1.0f, true, false},
 
                 {"Press ~INPUT_CONTEXT~ to take the lift to the ground.",
                  locationsLC["GayTonyPenthouseApartment"], locationsLC["GayTonyPenthouseGround"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
+
+                 {"Press ~INPUT_CONTEXT~ to take the lift to the penthouse.",
+                 locationsLC["YusufAmierPenthouseGround"], locationsLC["YusufAmierPenthouseApartment"], -1.0f, 0.6f, 0.5f, 1.0f, true, false},
+
+                {"Press ~INPUT_CONTEXT~ to take the lift to the ground.",
+                 locationsLC["YusufAmierPenthouseApartment"], locationsLC["YusufAmierPenthouseGround"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
             };
             SpawnMarkers(locationsLC, markersLC);
         }

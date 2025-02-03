@@ -63,6 +63,9 @@
     <ClCompile Include="keyboard.cpp">
       <Filter>helpers</Filter>
     </ClCompile>
+    <ClCompile Include="PayNSpray.cpp">
+      <Filter>helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Farlods.h">
@@ -127,6 +130,9 @@
       <Filter>helpers</Filter>
     </ClInclude>
     <ClInclude Include="keyboard.h">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="PayNSpray.h">
       <Filter>helpers</Filter>
     </ClInclude>
   </ItemGroup>

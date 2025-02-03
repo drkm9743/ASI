@@ -11,6 +11,7 @@ public:
     static bool EnableNorthYankton;
 	static bool EnableLibertyCityLODLights;
 	static bool EnableLCOnStartup;
+    static bool GrantAccessToRestrictedAreas;
 
     static void Load();
 

@@ -100,6 +100,7 @@
     <ClCompile Include="Blips.cpp" />
     <ClCompile Include="IPL.cpp" />
     <ClCompile Include="PathNodeState.cpp" />
+    <ClCompile Include="PayNSpray.cpp" />
     <ClCompile Include="Respawn.cpp" />
     <ClCompile Include="RespawnBlockToggle.cpp" />
     <ClCompile Include="Scenario.cpp" />
@@ -124,6 +125,7 @@
     <ClInclude Include="Blips.h" />
     <ClInclude Include="IPL.h" />
     <ClInclude Include="PathNodeState.h" />
+    <ClInclude Include="PayNSpray.h" />
     <ClInclude Include="Respawn.h" />
     <ClInclude Include="RespawnBlock.h" />
     <ClInclude Include="RespawnBlockToggle.h" />

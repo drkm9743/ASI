@@ -7,6 +7,7 @@ bool Settings::EnableCayoPerico = true;
 bool Settings::EnableNorthYankton = true;
 bool Settings::EnableLibertyCityLODLights = true;
 bool Settings::EnableLCOnStartup = true;
+bool Settings::GrantAccessToRestrictedAreas = false;
 
 void Settings::Load()
 {
@@ -20,6 +21,7 @@ void Settings::Load()
     EnableNorthYankton = LoadBoolSetting("WorldTravel", "EnableNorthYankton", true, iniFilePath);
 	EnableLibertyCityLODLights = LoadBoolSetting("WorldTravel", "EnableLibertyCityLODLights", true, iniFilePath);
 	EnableLCOnStartup = LoadBoolSetting("WorldTravel", "EnableLCOnStartup", false, iniFilePath);
+    GrantAccessToRestrictedAreas = LoadBoolSetting("WorldTravel", "AccessRestrictedAreas", false, iniFilePath);
 }
 
 // Settings helper functions
