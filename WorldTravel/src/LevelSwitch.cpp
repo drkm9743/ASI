@@ -92,7 +92,11 @@ namespace levelSwitch
 	std::vector<bool> santosAmbientZonesState;
 
 	//WeatherTypes
-	std::vector<std::string> weatherTypes =
+	std::vector<std::string> santosWeatherTypes;
+	std::vector<std::string> libertyWeatherTypes;
+	std::vector<std::string> yanktonWeatherTypes;
+	std::vector<std::string> cayoWeatherTypes;
+	/*std::vector<std::string> weatherTypes =
 	{
 		"CLEAR",
 		"EXTRASUNNY",
@@ -122,7 +126,7 @@ namespace levelSwitch
 		"SNOW",
 		"SNOWLIGHT",
 		"BLIZZARD"
-	};
+	};*/
 
 	int LCEnabled = 0;
 	//int playerLocationID = 0; // 0 = LS    1 = LC    2 = NY    3 = CP
@@ -233,6 +237,7 @@ namespace levelSwitch
 			{"ZonedPeds", &santosPeds},
 			{"ZonedVehicles", &santosVehicles},
 			{"ZonedRadioStations", &santosRadio},
+			{"WeatherTypes", &santosWeatherTypes},
 			{"Mods/ModIPLs", &modIpls}
 		};
 		readCityFiles("Los Santos", lsFiles);
@@ -242,7 +247,8 @@ namespace levelSwitch
 		std::unordered_map<std::string, std::vector<std::string>*> nyFiles = {
 			{"Zones", &yanktonZones},
 			{"AmbientZones", &yanktonAmbientZones},
-			{"IPLs", &yanktonIpls}
+			{"IPLs", &yanktonIpls},
+			{"WeatherTypes", &yanktonWeatherTypes}
 		};
 		readCityFiles("North Yankton", nyFiles);
 	}
@@ -252,7 +258,8 @@ namespace levelSwitch
 			{"Scenarios", &cayoScenarios},
 			{"Zones", &cayoZones},
 			{"AmbientZones", &cayoAmbientZones},
-			{"IPLsMP", &cayoMpIpls}
+			{"IPLsMP", &cayoMpIpls},
+			{"WeatherTypes", &cayoWeatherTypes}
 		};
 		readCityFiles("Cayo Perico", cpFiles);
 	}
@@ -268,7 +275,8 @@ namespace levelSwitch
 			{"IPLsLODLights", &libertyLODLightIpls},
 			{"ZonedPeds", &libertyPeds},
 			{"ZonedVehicles", &libertyVehicles},
-			{"ZonedRadioStations", &libertyRadio}
+			{"ZonedRadioStations", &libertyRadio},
+			{"WeatherTypes", &libertyWeatherTypes}
 		};
 		readCityFiles("Liberty City", lcFiles);
 	}
@@ -1096,10 +1104,14 @@ namespace levelSwitch
 
 		UI::SET_USE_ISLAND_MAP(true);
 
-		int weatherID = std::rand() % weatherTypes.size();
+		int weatherID = std::rand() % cayoWeatherTypes.size();
 		if (!NETWORK::NETWORK_IS_IN_SESSION())
 		{
-			GAMEPLAY::SET_WEATHER_TYPE_NOW(const_cast<char*>(weatherTypes[weatherID].c_str()));
+			GAMEPLAY::SET_WEATHER_TYPE_NOW(const_cast<char*>(cayoWeatherTypes[weatherID].c_str()));
+		}
+		else
+		{
+			GAMEPLAY::SET_WEATHER_TYPE_PERSIST(const_cast<char*>(cayoWeatherTypes[weatherID].c_str()));
 		}
 
 		worldtravel::PathNodeState::SetPathNodeState(2);
@@ -1128,11 +1140,16 @@ namespace levelSwitch
 
 		loadMapLiberty(libertyScenarios, libertyZones, libertyAmbientZones, libertyPeds, libertyVehicles, libertyRadio, { 12, 13, 14, 16, 17, 18 });
 		
-		int weatherID = std::rand() % weatherTypes.size();
+		int weatherID = std::rand() % libertyWeatherTypes.size();
+		GAMEPLAY::SET_OVERRIDE_WEATHER(const_cast<char*>(libertyWeatherTypes[weatherID].c_str()));
 		if (!NETWORK::NETWORK_IS_IN_SESSION())
 		{
-			GAMEPLAY::SET_WEATHER_TYPE_NOW(const_cast<char*>(weatherTypes[weatherID].c_str()));
+			//GAMEPLAY::SET_WEATHER_TYPE_NOW_PERSIST(const_cast<char*>(libertyWeatherTypes[weatherID].c_str()));
 			UI::_SET_MINIMAP_REVEALED(true);
+		}
+		else
+		{
+			//GAMEPLAY::SET_WEATHER_TYPE_PERSIST(const_cast<char*>(libertyWeatherTypes[weatherID].c_str()));
 		}
 		
 		worldtravel::PathNodeState::SetPathNodeState(1);
@@ -1180,12 +1197,20 @@ namespace levelSwitch
 			}
 		}
 
-		int weatherID = std::rand() % weatherTypes.size();
+		int weatherID = std::rand() % santosWeatherTypes.size();
 		// if in multiplayer
-		if (!NETWORK::NETWORK_IS_IN_SESSION())
+		if (NETWORK::NETWORK_IS_IN_SESSION())
 		{
-			GAMEPLAY::SET_WEATHER_TYPE_NOW(const_cast<char*>(weatherTypes[weatherID].c_str()));
+			GAMEPLAY::SET_WEATHER_TYPE_NOW(const_cast<char*>(santosWeatherTypes[weatherID].c_str()));
+			GAMEPLAY::CLEAR_WEATHER_TYPE_NOW_PERSIST_NETWORK(1);
 		}
+		else
+		{
+			//GAMEPLAY::SET_WEATHER_TYPE_PERSIST(const_cast<char*>(santosWeatherTypes[weatherID].c_str()));
+			GAMEPLAY::CLEAR_WEATHER_TYPE_PERSIST();
+		}
+
+		GAMEPLAY::CLEAR_OVERRIDE_WEATHER();
 
 		if (!NETWORK::NETWORK_IS_IN_SESSION())
 		{
@@ -1208,20 +1233,20 @@ namespace levelSwitch
 		UI::SET_MINIMAP_IN_PROLOGUE(true);
 
 		int weatherID = std::rand() % yanktonWeatherTypes.size();
+		GAMEPLAY::SET_OVERRIDE_WEATHER(const_cast<char*>(yanktonWeatherTypes[weatherID].c_str()));
 		// if in multiplayer
-		if (NETWORK::NETWORK_IS_IN_SESSION())
+		/*if (NETWORK::NETWORK_IS_IN_SESSION())
 		{
 			GAMEPLAY::SET_WEATHER_TYPE_NOW_PERSIST(const_cast<char*>(yanktonWeatherTypes[weatherID].c_str()));
 		}
 		else
 		{
 			GAMEPLAY::SET_WEATHER_TYPE_PERSIST(const_cast<char*>(yanktonWeatherTypes[weatherID].c_str()));
-		}
+		}*/
 		PATHFIND::SET_ROADS_IN_ANGLED_AREA(5526.24f, -5137.23f, 61.78925f, 3679.327f, -4973.879f, 125.0828f, 192, false, true, true);
 		PATHFIND::SET_ROADS_IN_ANGLED_AREA(3691.211f, -4941.24f, 94.59368f, 3511.115f, -4869.191f, 126.7621f, 16, false, true, true);
 		PATHFIND::SET_ROADS_IN_ANGLED_AREA(3510.004f, -4865.81f, 94.69557f, 3204.424f, -4833.817f, 126.8152f, 16, false, true, true);
 		PATHFIND::SET_ROADS_IN_ANGLED_AREA(3186.534f, -4832.798f, 109.8148f, 3202.187f, -4833.993f, 114.815f, 16, false, true, true);
-		GAMEPLAY::SET_OVERRIDE_WEATHER(const_cast<char*>(yanktonWeatherTypes[weatherID].c_str()));
 		worldtravel::PathNodeState::SetPathNodeState(1);
 		SetBlipsLocation(2);
 	}
@@ -1369,6 +1394,17 @@ namespace levelSwitch
 			WAIT(1000); // 1 Second
 		}*/
 
+		// if in multiplayer
+		if (NETWORK::NETWORK_IS_IN_SESSION())
+		{
+			GAMEPLAY::CLEAR_WEATHER_TYPE_NOW_PERSIST_NETWORK(1);
+		}
+		else
+		{
+			GAMEPLAY::CLEAR_WEATHER_TYPE_PERSIST();
+		}
+		GAMEPLAY::CLEAR_OVERRIDE_WEATHER();
+
 		// if in singleplayer
 		if (!NETWORK::NETWORK_IS_IN_SESSION())
 		{
@@ -1397,6 +1433,17 @@ namespace levelSwitch
 		else
 			removeIpls(libertySpIpls);
 
+		// if in multiplayer
+		if (NETWORK::NETWORK_IS_IN_SESSION())
+		{
+			GAMEPLAY::CLEAR_WEATHER_TYPE_NOW_PERSIST_NETWORK(1);
+		}
+		else
+		{
+			GAMEPLAY::CLEAR_WEATHER_TYPE_PERSIST();
+		}
+		GAMEPLAY::CLEAR_OVERRIDE_WEATHER();
+
 		if (!NETWORK::NETWORK_IS_IN_SESSION())
 			UI::_SET_MINIMAP_REVEALED(false);
 
@@ -1421,6 +1468,17 @@ namespace levelSwitch
 			removeIpls(santosSpIpls, santosSpIplState);
 
 		unloadMapSantos(santosScenarios, santosZones, santosAmbientZones, santosPeds, santosVehicles, santosRadio, { 0, 3 }, santosScenariosState, santosAmbientZonesState);
+
+		// if in multiplayer
+		/*if (NETWORK::NETWORK_IS_IN_SESSION())
+		{
+			GAMEPLAY::CLEAR_WEATHER_TYPE_NOW_PERSIST_NETWORK(1);
+		}
+		else
+		{
+			GAMEPLAY::CLEAR_WEATHER_TYPE_PERSIST();
+		}
+		GAMEPLAY::CLEAR_OVERRIDE_WEATHER();*/
 
 		// if in singleplayer
 		if (!NETWORK::NETWORK_IS_IN_SESSION())
@@ -1457,7 +1515,7 @@ namespace levelSwitch
 		PATHFIND::SET_ROADS_IN_ANGLED_AREA(3691.211f, -4941.24f, 94.59368f, 3511.115f, -4869.191f, 126.7621f, 16, false, false, true);
 		PATHFIND::SET_ROADS_IN_ANGLED_AREA(3510.004f, -4865.81f, 94.69557f, 3204.424f, -4833.817f, 126.8152f, 16, false, false, true);
 		PATHFIND::SET_ROADS_IN_ANGLED_AREA(3186.534f, -4832.798f, 109.8148f, 3202.187f, -4833.993f, 114.815f, 16, false, false, true);
-		int weatherID = std::rand() % yanktonWeatherTypes.size();
+		
 		// if in multiplayer
 		if (NETWORK::NETWORK_IS_IN_SESSION())
 		{
@@ -2095,112 +2153,89 @@ namespace levelSwitch
 		{
 			player = PED::GET_VEHICLE_PED_IS_USING(player);
 			Vector3 playerVelocity = ENTITY::GET_ENTITY_VELOCITY(player);
-			float playerVelocityX = playerVelocity.x;
-			float playerVelocityY = playerVelocity.y;
-			float playerVelocityZ = playerVelocity.z;
-			if (worldtravel::IsLosSantos())
+			float velocityMagnitude = sqrt(playerVelocity.x * playerVelocity.x + playerVelocity.y * playerVelocity.y + playerVelocity.z * playerVelocity.z);
+			int currentLocation = worldtravel::IsLosSantos() ? 0 : worldtravel::IsLibertyCity() ? 1 : -1;
+
+			struct DockInfo {
+				float* coords;
+				float markerX, markerY, markerZ;
+				float heading;
+				const char* helpText;
+				int destination;
+			} docks[] = {
+				{ LosSantosDocks.data(), 1170.40f, -2973.52f, 4.93f, 334.40f, "Press ~INPUT_CONTEXT~ to ship this vehicle to Liberty City for $3500.", 1},
+				{ LibertyCityDocks.data(), 5935.99f, -3531.89f, 4.85f, 90.0f, "Press ~INPUT_CONTEXT~ to ship this vehicle to Los Santos for $3500.", 0}
+			};
+
+			if (currentLocation != -1 && !ENTITY::IS_ENTITY_DEAD(playerPed) && ENTITY::IS_ENTITY_AT_COORD(player, docks[currentLocation].coords[0], docks[currentLocation].coords[1], docks[currentLocation].coords[2], 150.0f, 150.0f, 150.0f, 0, 1, 0))
 			{
-				if (!ENTITY::IS_ENTITY_DEAD(playerPed) && ENTITY::IS_ENTITY_AT_COORD(player, LosSantosDocks[0], LosSantosDocks[1], LosSantosDocks[2], 150.0f, 150.0f, 150.0f, 0, 1, 0))
+				GRAPHICS::DRAW_MARKER(1, docks[currentLocation].markerX, docks[currentLocation].markerY, docks[currentLocation].markerZ, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 9.0f, 9.0f, 0.8f, 240, 200, 80, 150, false, false, 2, false, false, false, 0);
+
+				if (ENTITY::IS_ENTITY_AT_COORD(player, docks[currentLocation].coords[0], docks[currentLocation].coords[1], docks[currentLocation].coords[2], 10.0f, 10.0f, 1.0f, 0, 1, 0))
 				{
-					GRAPHICS::DRAW_MARKER(1, 1170.40f, -2973.52f, 4.93f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 9.0f, 9.0f, 0.8f, 240, 200, 80, 150, false, false, 2, false, false, false, 0);
-					if (ENTITY::IS_ENTITY_AT_COORD(player, LosSantosDocks[0], LosSantosDocks[1], LosSantosDocks[2], 10.0f, 10.0f, 1.0f, 0, 1, 0))
+					if (PLAYER::GET_PLAYER_WANTED_LEVEL(playerPed) == 0)
 					{
-						if (PLAYER::GET_PLAYER_WANTED_LEVEL(playerPed) == 0)
+						if (velocityMagnitude < 0.1f)
 						{
-							if (playerVelocityX < 0.1f && playerVelocityY < 0.1f && playerVelocityZ < 0.1f)
+							worldtravel::HelpText::DisplayHelpText(docks[currentLocation].helpText);
+							if (CONTROLS::IS_DISABLED_CONTROL_JUST_PRESSED(2, 51))
 							{
-								worldtravel::HelpText::DisplayHelpText("Press ~INPUT_CONTEXT~ to ship this vehicle to Liberty City for $3500.");
-								if (CONTROLS::IS_DISABLED_CONTROL_JUST_PRESSED(2, 51))
+								CAM::DO_SCREEN_FADE_OUT(800);
+								WAIT(800);
+								worldtravel::SetPlayerLocationID(-1);
+								int maxWanted = PLAYER::GET_MAX_WANTED_LEVEL();
+								PLAYER::SET_MAX_WANTED_LEVEL(0);
+								ENTITY::FREEZE_ENTITY_POSITION(player, true);
+								ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToLCFromLSCoords[0] + 1500, FlyToLCFromLSCoords[1] + 1500, FlyToLCFromLSCoords[2] + 1500, 0, 0, 1);
+
+								switch (currentLocation)
 								{
-									CAM::DO_SCREEN_FADE_OUT(800);
-									WAIT(800);
-									worldtravel::SetPlayerLocationID(-1);
-									int maxWanted = PLAYER::GET_MAX_WANTED_LEVEL();
-									PLAYER::SET_MAX_WANTED_LEVEL(0);
-									ENTITY::FREEZE_ENTITY_POSITION(player, true);
-									ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToCPFromLSCoordsMP[0], FlyToCPFromLSCoordsMP[1], FlyToCPFromLSCoordsMP[2], 0, 0, 1);
+								case 0:
+									unloadSantos();
+									break;
+								case 1:
+									unloadLiberty();
+									break;
+								}
+
+								switch (docks[currentLocation].destination)
+								{
+								case 1:
 									loadLiberty();
 									ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, LibertyCityDocksArrival[0], LibertyCityDocksArrival[1], LibertyCityDocksArrival[2], 0, 0, 1);
-									ENTITY::SET_ENTITY_HEADING(player, 334.40f);
-									CAM::SET_GAMEPLAY_CAM_RELATIVE_HEADING(0.0f);
-									CAM::SET_GAMEPLAY_CAM_RELATIVE_PITCH(0.0f, 0.0f);
-									if (!NETWORK::NETWORK_IS_IN_SESSION())
-									{
-										TIME::ADD_TO_CLOCK_TIME(12, 0, 0);
-									}
-									else
-									{
-										NetworkClockController(true);
-									}
-									unloadSantos();
-									if (NETWORK::NETWORK_IS_IN_SESSION())
-									{
-										NETWORK::NETWORK_SET_IN_MP_CUTSCENE(false, false);
-									}
-									ENTITY::SET_ENTITY_HEADING(playerPed, 334.40f);
-									PLAYER::SET_MAX_WANTED_LEVEL(maxWanted);
-									ENTITY::FREEZE_ENTITY_POSITION(player, false);
-									worldtravel::SetPlayerLocationID(1);
-									CAM::DO_SCREEN_FADE_IN(800);
-								}
-							}
-						}
-						else
-						{
-							worldtravel::HelpText::DisplayHelpText("You cannot ship this vehicle while wanted by the cops!");
-						}
-					}
-				}
-			}
-			if (worldtravel::IsLibertyCity())
-			{
-				if (!ENTITY::IS_ENTITY_DEAD(playerPed) && ENTITY::IS_ENTITY_AT_COORD(player, LibertyCityDocks[0], LibertyCityDocks[1], LibertyCityDocks[2], 150.0f, 150.0f, 150.0f, 0, 1, 0))
-				{
-					GRAPHICS::DRAW_MARKER(1, 5935.99f, -3531.89f, 4.85f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 9.0f, 9.0f, 0.8f, 240, 200, 80, 150, false, false, 2, false, false, false, 0);
-					if (ENTITY::IS_ENTITY_AT_COORD(player, LibertyCityDocks[0], LibertyCityDocks[1], LibertyCityDocks[2], 10.0f, 10.0f, 1.0f, 0, 1, 0))
-					{
-						if (PLAYER::GET_PLAYER_WANTED_LEVEL(playerPed) == 0)
-						{
-							if (playerVelocityX < 0.1f && playerVelocityY < 0.1f && playerVelocityZ < 0.1f)
-							{
-								worldtravel::HelpText::DisplayHelpText("Press ~INPUT_CONTEXT~ to ship this vehicle to Los Santos for $3500.");
-								if (CONTROLS::IS_DISABLED_CONTROL_JUST_PRESSED(2, 51))
-								{
-									CAM::DO_SCREEN_FADE_OUT(800);
-									WAIT(800);
-									worldtravel::SetPlayerLocationID(-1);
-									int maxWanted = PLAYER::GET_MAX_WANTED_LEVEL();
-									PLAYER::SET_MAX_WANTED_LEVEL(0);
-									ENTITY::FREEZE_ENTITY_POSITION(player, true);
-									ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToCPFromLCCoordsMP[0], FlyToCPFromLCCoordsMP[1], FlyToCPFromLCCoordsMP[2], 0, 0, 1);
+									break;
+								case 0:
 									loadSantos();
 									ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, LosSantosDocksArrival[0], LosSantosDocksArrival[1], LosSantosDocksArrival[2], 0, 0, 1);
-									ENTITY::SET_ENTITY_HEADING(player, 90.0f);
-									CAM::SET_GAMEPLAY_CAM_RELATIVE_HEADING(0.0f);
-									CAM::SET_GAMEPLAY_CAM_RELATIVE_PITCH(0.0f, 0.0f);
-
-									if (!NETWORK::NETWORK_IS_IN_SESSION())
-									{
-										TIME::ADD_TO_CLOCK_TIME(12, 0, 0);
-									}
-									else
-									{
-										NetworkClockController(false);
-										NETWORK::NETWORK_CLEAR_CLOCK_TIME_OVERRIDE();
-									}
-									unloadLiberty();
-									ENTITY::SET_ENTITY_HEADING(playerPed, 90.0f);
-									PLAYER::SET_MAX_WANTED_LEVEL(maxWanted);
-									ENTITY::FREEZE_ENTITY_POSITION(player, false);
-									worldtravel::SetPlayerLocationID(0);
-									CAM::DO_SCREEN_FADE_IN(800);
+									break;
 								}
+
+								ENTITY::SET_ENTITY_HEADING(player, docks[currentLocation].heading);
+								CAM::SET_GAMEPLAY_CAM_RELATIVE_HEADING(0.0f);
+								CAM::SET_GAMEPLAY_CAM_RELATIVE_PITCH(0.0f, 0.0f);
+
+								if (!NETWORK::NETWORK_IS_IN_SESSION())
+								{
+									TIME::ADD_TO_CLOCK_TIME(12, 0, 0);
+								}
+								else
+								{
+									NetworkClockController(docks[currentLocation].destination == 1);
+									if (docks[currentLocation].destination == 0)
+										NETWORK::NETWORK_CLEAR_CLOCK_TIME_OVERRIDE();
+								}
+
+								ENTITY::SET_ENTITY_HEADING(playerPed, docks[currentLocation].heading);
+								PLAYER::SET_MAX_WANTED_LEVEL(maxWanted);
+								ENTITY::FREEZE_ENTITY_POSITION(player, false);
+								worldtravel::SetPlayerLocationID(docks[currentLocation].destination);
+								CAM::DO_SCREEN_FADE_IN(800);
 							}
 						}
-						else
-						{
-							worldtravel::HelpText::DisplayHelpText("You cannot ship this vehicle while wanted by the cops!");
-						}
+					}
+					else
+					{
+						worldtravel::HelpText::DisplayHelpText("You cannot ship this vehicle while wanted by the cops!");
 					}
 				}
 			}
