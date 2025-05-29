@@ -14,6 +14,7 @@
 #include "RockstarEditor.h"
 #include "Water.h"
 #include "Paths.h"
+#include "mojito_wt_api.h"
 
 static void LoggingEnabled()
 {
@@ -60,6 +61,9 @@ DWORD WINAPI Main()
 
 	Water::Init();
 	spdlog::info("Patched Water.");
+
+	mojito::Init();
+	spdlog::info("Init Mojito FW");
 
 	MH_EnableHook(MH_ALL_HOOKS);
 	return 1;
