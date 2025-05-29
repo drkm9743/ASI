@@ -6,13 +6,29 @@
 #include <iostream>
 #include <vector>
 #include "HelpText.h"
+#include "Menu.h"
 #include "MpMap.h"
 #include "PlayerLocation.h"
 #include "Farlods.h"
 #include "PathNodeState.h"
+#include "RestrictedAreaClearance.h"
+#include "WaterState.h"
 #include <unordered_map>
 #include <functional>
-#include "IPL.h"
+#include "Level.h"
+#include "AmbientZone.h"
+#include "AmbientZoneGroup.h"
+#include "Ipl.h"
+#include "IplGroup.h"
+#include "RadioStation.h"
+#include "RadioStationGroup.h"
+#include "Scenario.h"
+#include "ScenarioGroup.h"
+#include "WeatherTypes.h"
+#include "Zone.h"
+#include "ZoneGroup.h"
+#include "ZonedModel.h"
+#include "ZonedModelGroup.h"
 #include "Settings.h"
 
 namespace levelSwitch
@@ -28,74 +44,85 @@ namespace levelSwitch
 	int ModIPLsIndex;
 
 	// Streaming Data References
+	bool loadLibertyCity;
 	bool loadLibertyLODLights;
+	bool loadNorthYankton;
+	bool loadCayoPerico;
+	bool loadSantaFuegos;
+	bool fastTravel;
 	bool restrictedAreaClearance;
 	int tpKey;
-	std::vector<std::string> libertyScenarios;
-	std::vector<std::string> libertyZones;
-	std::vector<std::string> libertyAmbientZones;
-	std::vector<std::string> libertyIpls;
-	std::vector<std::string> libertySpIpls;
-	std::vector<std::string> libertyMpIpls;
-	std::vector<std::string> libertyLODLightIpls;
-	std::vector<std::string> libertyPeds;
-	std::vector<std::string> libertyVehicles;
-	std::vector<std::string> libertyRadio;
-	std::vector<std::string> santosScenarios;
-	std::vector<std::string> santosZones;
-	std::vector<std::string> santosAmbientZones;
-	std::vector<std::string> santosIpls;
-	std::vector<std::string> santosSpIpls;
-	std::vector<std::string> santosMpIpls;
-	std::vector<std::string> santosMpForcedIpls;
-	std::vector<std::string> santosPeds;
-	std::vector<std::string> santosVehicles;
-	std::vector<std::string> santosRadio;
-	std::vector<std::string> yanktonZones;
-	std::vector<std::string> yanktonAmbientZones;
-	std::vector<std::string> yanktonIpls;
-	std::vector<std::string> cayoScenarios;
-	std::vector<std::string> cayoZones;
-	std::vector<std::string> cayoAmbientZones;
-	std::vector<std::string> cayoMpIpls;
-	std::vector<std::string> cayoInteriors = { "h4_islandx_mansion_vault",
-												"h4_islandx_mansion_lockup_03",
-												"h4_islandx_mansion_lockup_02",
-												"h4_islandx_mansion_lockup_01",
-												"h4_islandx_mansion_office",
-												"h4_mph4_airstrip_interior_0_airstrip_hanger" };
-	std::vector<std::string> cayoInstancePlacement = { "h4_mph4_terrain_01_grass_0",
-														"h4_mph4_terrain_01_grass_1",
-														"h4_mph4_terrain_02_grass_0",
-														"h4_mph4_terrain_02_grass_1",
-														"h4_mph4_terrain_02_grass_2",
-														"h4_mph4_terrain_02_grass_3",
-														"h4_mph4_terrain_04_grass_0",
-														"h4_mph4_terrain_04_grass_1",
-														"h4_mph4_terrain_05_grass_0",
-														"h4_mph4_terrain_06_grass_0"};
-	std::vector<std::string> cayoOccl = { "h4_mph4_terrain_occ_00",
-											"h4_mph4_terrain_occ_01",
-											"h4_mph4_terrain_occ_02",
-											"h4_mph4_terrain_occ_03",
-											"h4_mph4_terrain_occ_04",
-											"h4_mph4_terrain_occ_05",
-											"h4_mph4_terrain_occ_06",
-											"h4_mph4_terrain_occ_07",
-											"h4_mph4_terrain_occ_08",
-											"h4_mph4_terrain_occ_09" };
-	std::vector<std::string> modIpls;
-	std::vector<bool> santosIplState;
-	std::vector<bool> santosSpIplState;
-	std::vector<bool> santosMpIplState;
-	std::vector<bool> santosScenariosState;
-	std::vector<bool> santosAmbientZonesState;
+	//std::vector<std::string> libertyScenarios;
+	ScenarioGroup libertyScenarioGroup;
+	//std::vector<std::string> libertyZones;
+	ZoneGroup libertyZoneGroup;
+	//std::vector<std::string> libertyAmbientZones;
+	AmbientZoneGroup libertyAmbientZoneGroup;
+	//std::vector<std::string> libertyIpls;
+	//std::vector<std::string> libertySpIpls;
+	//std::vector<std::string> libertyMpIpls;
+	//std::vector<std::string> libertyLODLightIpls;
+	IplGroup libertyIplGroup;
+	IplGroup libertySpIplGroup;
+	IplGroup libertyMpIplGroup;
+	IplGroup libertyLODLightIplGroup;
+	//std::vector<std::string> libertyPeds;
+	//std::vector<std::string> libertyVehicles;
+	ZonedModelGroup libertyPedGroup;
+	ZonedModelGroup libertyVehicleGroup;
+	//std::vector<std::string> libertyRadio;
+	RadioStationGroup libertyRadioGroup;
+	//std::vector<std::string> santosScenarios;
+	ScenarioGroup santosScenarioGroup;
+	//std::vector<std::string> santosZones;
+	ZoneGroup santosZoneGroup;
+	//std::vector<std::string> santosAmbientZones;
+	AmbientZoneGroup santosAmbientZoneGroup;
+	//std::vector<std::string> santosIpls;
+	//std::vector<std::string> santosSpIpls;
+	//std::vector<std::string> santosMpIpls;
+	//std::vector<std::string> santosMpForcedIpls;
+	IplGroup santosIplGroup;
+	IplGroup santosSpIplGroup;
+	IplGroup santosMpIplGroup;
+	IplGroup santosMpForcedIplGroup;
+	//std::vector<std::string> santosPeds;
+	//std::vector<std::string> santosVehicles;
+	ZonedModelGroup santosPedGroup;
+	ZonedModelGroup santosVehicleGroup;
+	//std::vector<std::string> santosRadio;
+	RadioStationGroup santosRadioGroup;
+	//std::vector<std::string> yanktonZones;
+	ZoneGroup yanktonZoneGroup;
+	//std::vector<std::string> yanktonAmbientZones;
+	AmbientZoneGroup yanktonAmbientZoneGroup;
+	//std::vector<std::string> yanktonIpls;
+	IplGroup yanktonIplGroup;
+	//std::vector<std::string> cayoScenarios;
+	ScenarioGroup cayoScenarioGroup;
+	//std::vector<std::string> cayoZones;
+	ZoneGroup cayoZoneGroup;
+	//std::vector<std::string> cayoAmbientZones;
+	AmbientZoneGroup cayoAmbientZoneGroup;
+	//std::vector<std::string> cayoMpIpls;
+	IplGroup cayoMpIplGroup;
+	//std::vector<std::string> modIpls;
+	IplGroup modIplGroup;
+	//std::vector<bool> santosIplState;
+	//std::vector<bool> santosSpIplState;
+	//std::vector<bool> santosMpIplState;
+	//std::vector<bool> santosScenariosState;
+	//std::vector<bool> santosAmbientZonesState;
 
 	//WeatherTypes
-	std::vector<std::string> santosWeatherTypes;
+	/*std::vector<std::string> santosWeatherTypes;
 	std::vector<std::string> libertyWeatherTypes;
 	std::vector<std::string> yanktonWeatherTypes;
-	std::vector<std::string> cayoWeatherTypes;
+	std::vector<std::string> cayoWeatherTypes;*/
+	WeatherTypes santosWeatherTypes;
+	WeatherTypes libertyWeatherTypes;
+	WeatherTypes yanktonWeatherTypes;
+	WeatherTypes cayoWeatherTypes;
 	/*std::vector<std::string> weatherTypes =
 	{
 		"CLEAR",
@@ -128,6 +155,13 @@ namespace levelSwitch
 		"BLIZZARD"
 	};*/
 
+	// Level Objects
+	Level losSantos;
+	Level northYankton;
+	Level cayoPerico;
+	Level libertyCity;
+	Level santaFuegos;
+
 	int LCEnabled = 0;
 	//int playerLocationID = 0; // 0 = LS    1 = LC    2 = NY    3 = CP
 
@@ -135,8 +169,8 @@ namespace levelSwitch
 	Player player;
 	Ped playerPed;
 	Vehicle playerVehicle;
-	Vehicle yanktonVehicle;
-	Hash yanktonVehicleHash;
+	Vehicle rentalVehicle;
+	Hash rentalVehicleHash;
 	BOOL bPlayerExists;
 	Vector3 PlayerPosition;
 
@@ -190,17 +224,68 @@ namespace levelSwitch
 	std::vector<float> FlyToCPFromLSCoordsMP =	{ 2750.0f, -3200.0f, 0.0f };
 	std::vector<float> FlyToCPFromLCCoords =	{ 10500.0f, -13500.0f, 0.0f };
 
-	// Interior Cords
-	std::vector<float> heist_police_dlc =		{ 442.4296f, -985.067f, 29.88529f };
-	std::vector<float> gr_grdlc_int_01 =		{ 1103.562f, -3000.0f, -40.0f };
-	std::vector<float> xm_x17dlc_int_01 =		{ 520.0f, 4750.0f, -70.0f };
-	std::vector<float> xm_x17dlc_int_sub =		{ 512.7686f, 4851.981f, -62.90245f };
-	std::vector<float> ba_dlc_int_03_ba =		{ -1421.015f, -3012.587f, -80.0f };
-	std::vector<float> h4_interior_0_int_sub =	{ 1560.0f, 400.0f, -50.0f };
-	std::vector<float> dlc_int_01_xm3 =			{ 485.0f, -2625.0f, -50.0f };
-	std::vector<float> dlc_int_01_m23_1 =		{ -880.0f, -2770.0f, -50.0f };
-	bool tempWaterSwapActive = false;
-	bool hasCayoLoadedExternally = false;
+	// Menu Options
+	std::vector<string> santosAirportOptions = { "(FIA)Liberty City, Liberty State [ON TIME]",
+													"(NYA)Ludendorff, North Yankton [ON TIME]",
+													"(VCI)Vice City, Leonida [DELAYED]",
+													"(EBA)San Fierro, San Andreas [CANCELED]",
+													"(LVA)Las Venturas, San Andreas [DELAYED]",
+													"(CIA)Carcer City, Dolmen State [CANCELED]",
+													"(PIA)Cottonmouth, Aloisia [CANCELED]",
+													"(LIA)Windy Bay, Prairie [CANCELED]" };
+	std::vector<bool> santosAirportOptionsAvalible = { true,
+														true,
+														false,
+														false,
+														false,
+														false,
+														false,
+														false };
+
+	std::vector<string> libertyAirportOptions = { "(LSX)Los Santos, San Andreas [ON TIME]",
+													"(NYA)Ludendorff, North Yankton [ON TIME]",
+													"(VCI)Vice City, Leonida [DELAYED]",
+													"(EBA)San Fierro, San Andreas [CANCELED]",
+													"(LVA)Las Venturas, San Andreas [DELAYED]",
+													"(CIA)Carcer City, Dolmen State [CANCELED]",
+													"(PIA)Cottonmouth, Aloisia [CANCELED]",
+													"(LIA)Windy Bay, Prairie [CANCELED]" };
+	std::vector<bool> libertyAirportOptionsAvalible = { true,
+														true,
+														false,
+														false,
+														false,
+														false,
+														false,
+														false };
+
+	std::vector<string> yanktonAirportOptions = { "(LSX)Los Santos, San Andreas [ON TIME]",
+													"(FIA)Liberty City, Liberty State [ON TIME]",
+													"(VCI)Vice City, Leonida [DELAYED]",
+													"(EBA)San Fierro, San Andreas [CANCELED]",
+													"(LVA)Las Venturas, San Andreas [DELAYED]",
+													"(CIA)Carcer City, Dolmen State [CANCELED]",
+													"(PIA)Cottonmouth, Aloisia [CANCELED]",
+													"(LIA)Windy Bay, Prairie [CANCELED]" };
+	std::vector<bool> yanktonAirportOptionsAvalible = { true,
+														true,
+														false,
+														false,
+														false,
+														false,
+														false,
+														false };
+	
+	std::vector<string> teleportOptions = { "Los Santos",
+											"North Yankton",
+											"Cayo Perico",
+											"Liberty City",
+											"Santa Fuegos"};
+	std::vector<bool> teleportOptionsAvalible = { true,
+													true,
+													true,
+													true,
+													true};
 
 	void readFileToVector(const std::string& filePath, std::vector<std::string>& targetVector) {
 		std::ifstream file(filePath);
@@ -226,7 +311,7 @@ namespace levelSwitch
 
 	// Location specific readers
 	void readLSFiles() {
-		std::unordered_map<std::string, std::vector<std::string>*> lsFiles = {
+		/*std::unordered_map<std::string, std::vector<std::string>*> lsFiles = {
 			{"Scenarios", &santosScenarios},
 			{"Zones", &santosZones},
 			{"AmbientZones", &santosAmbientZones},
@@ -240,32 +325,53 @@ namespace levelSwitch
 			{"WeatherTypes", &santosWeatherTypes},
 			{"Mods/ModIPLs", &modIpls}
 		};
-		readCityFiles("Los Santos", lsFiles);
+		readCityFiles("Los Santos", lsFiles);*/
+		santosScenarioGroup.ReadFile("./Levels/Los Santos/Scenarios.txt");
+		santosZoneGroup.ReadFile("./Levels/Los Santos/Zones.txt");
+		santosAmbientZoneGroup.ReadFile("./Levels/Los Santos/AmbientZones.txt");
+		santosIplGroup.ReadFile("./Levels/Los Santos/IPLs.txt");
+		santosSpIplGroup.ReadFile("./Levels/Los Santos/IPLsSP.txt");
+		santosMpIplGroup.ReadFile("./Levels/Los Santos/IPLsMP.txt");
+		santosMpForcedIplGroup.ReadFile("./Levels/Los Santos/IPLsMPForced.txt");
+		santosPedGroup.ReadFile("./Levels/Los Santos/ZonedPeds.txt");
+		santosVehicleGroup.ReadFile("./Levels/Los Santos/ZonedVehicles.txt");
+		santosRadioGroup.ReadFile("./Levels/Los Santos/ZonedRadioStations.txt");
+		santosWeatherTypes.ReadFile("./Levels/Los Santos/WeatherTypes.txt");
+		modIplGroup.ReadFile("./Levels/Los Santos/ModIPLs.txt");
 	}
 
 	void readNYFiles() {
-		std::unordered_map<std::string, std::vector<std::string>*> nyFiles = {
+		/*std::unordered_map<std::string, std::vector<std::string>*> nyFiles = {
 			{"Zones", &yanktonZones},
 			{"AmbientZones", &yanktonAmbientZones},
 			{"IPLs", &yanktonIpls},
 			{"WeatherTypes", &yanktonWeatherTypes}
 		};
-		readCityFiles("North Yankton", nyFiles);
+		readCityFiles("North Yankton", nyFiles);*/
+		yanktonZoneGroup.ReadFile("./Levels/North Yankton/Zones.txt");
+		yanktonAmbientZoneGroup.ReadFile("./Levels/North Yankton/AmbientZones.txt");
+		yanktonIplGroup.ReadFile("./Levels/North Yankton/IPLs.txt");
+		yanktonWeatherTypes.ReadFile("./Levels/North Yankton/WeatherTypes.txt");
 	}
 
 	void readCPFiles() {
-		std::unordered_map<std::string, std::vector<std::string>*> cpFiles = {
+		/*std::unordered_map<std::string, std::vector<std::string>*> cpFiles = {
 			{"Scenarios", &cayoScenarios},
 			{"Zones", &cayoZones},
 			{"AmbientZones", &cayoAmbientZones},
 			{"IPLsMP", &cayoMpIpls},
 			{"WeatherTypes", &cayoWeatherTypes}
 		};
-		readCityFiles("Cayo Perico", cpFiles);
+		readCityFiles("Cayo Perico", cpFiles);*/
+		cayoScenarioGroup.ReadFile("./Levels/Cayo Perico/Scenarios.txt");
+		cayoZoneGroup.ReadFile("./Levels/Cayo Perico/Zones.txt");
+		cayoAmbientZoneGroup.ReadFile("./Levels/Cayo Perico/AmbientZones.txt");
+		cayoMpIplGroup.ReadFile("./Levels/Cayo Perico/IPLsMP.txt");
+		cayoWeatherTypes.ReadFile("./Levels/Cayo Perico/WeatherTypes.txt");
 	}
 
 	void readLCFiles() {
-		std::unordered_map<std::string, std::vector<std::string>*> lcFiles = {
+		/*std::unordered_map<std::string, std::vector<std::string>*> lcFiles = {
 			{"Scenarios", &libertyScenarios},
 			{"Zones", &libertyZones},
 			{"AmbientZones", &libertyAmbientZones},
@@ -278,7 +384,18 @@ namespace levelSwitch
 			{"ZonedRadioStations", &libertyRadio},
 			{"WeatherTypes", &libertyWeatherTypes}
 		};
-		readCityFiles("Liberty City", lcFiles);
+		readCityFiles("Liberty City", lcFiles);*/
+		libertyScenarioGroup.ReadFile("./Levels/Liberty City/Scenarios.txt");
+		libertyZoneGroup.ReadFile("./Levels/Liberty City/Zones.txt");
+		libertyAmbientZoneGroup.ReadFile("./Levels/Liberty City/AmbientZones.txt");
+		libertyIplGroup.ReadFile("./Levels/Liberty City/IPLs.txt");
+		libertySpIplGroup.ReadFile("./Levels/Liberty City/IPLsSP.txt");
+		libertyMpIplGroup.ReadFile("./Levels/Liberty City/IPLsMP.txt");
+		libertyLODLightIplGroup.ReadFile("./Levels/Liberty City/IPLsLODLights.txt");
+		libertyPedGroup.ReadFile("./Levels/Liberty City/ZonedPeds.txt");
+		libertyVehicleGroup.ReadFile("./Levels/Liberty City/ZonedVehicles.txt");
+		libertyRadioGroup.ReadFile("./Levels/Liberty City/ZonedRadioStations.txt");
+		libertyWeatherTypes.ReadFile("./Levels/Liberty City/WeatherTypes.txt");
 	}
 
 
@@ -303,28 +420,40 @@ namespace levelSwitch
 	// Initialize Liberty City
 	void initialize()
 	{
-		readLSFiles();
-		readLCFiles();
-		readNYFiles();
-		readCPFiles();
+		//readLSFiles();
+		//readLCFiles();
+		//readNYFiles();
+		//readCPFiles();
+		losSantos.SetProperties("Los Santos", 0, 0, 0, 0, true, false);
+		northYankton.SetProperties("North Yankton", 2, 1, 0, 1, false, false);
+		cayoPerico.SetProperties("Cayo Perico", 3, 2, 1, 2, false, true);
+		libertyCity.SetProperties("Liberty City", 1, 1, 2, 3, false, false);
+		santaFuegos.SetProperties("Santa Fuegos", 4, 0, 3, 0, false, false);
 
-		for (int i = 0; i < libertyScenarios.size(); i++)
+		libertyCity.DisableActiveFiles();
+		santaFuegos.DisableActiveFiles();
+		losSantos.EnableRadios();
+		cayoPerico.DisableZoneGroup();
+		/*for (int i = 0; i < libertyScenarios.size(); i++)
 		{
 			AI::SET_SCENARIO_GROUP_ENABLED((char*)libertyScenarios[i].c_str(), false);
-		}
+		}*/
+		//libertyScenarioGroup.RemoveScenarioGroupIfActive();
 
-		for (int i = 0; i < libertyZones.size(); i++)
+		/*for (int i = 0; i < libertyZones.size(); i++)
 		{
 			int zoneId = ZONE::GET_ZONE_FROM_NAME_ID((char*)libertyZones[i].c_str());
 			ZONE::SET_ZONE_ENABLED(zoneId, false);
-		}
+		}*/
+		//libertyZoneGroup.DisableZoneGroup();
 
-		for (int i = 0; i < libertyAmbientZones.size(); i++)
+		/*for (int i = 0; i < libertyAmbientZones.size(); i++)
 		{
 			AUDIO::SET_AMBIENT_ZONE_STATE_PERSISTENT(const_cast<char*>(libertyAmbientZones[i].c_str()), false, true);
-		}
+		}*/
+		//libertyAmbientZoneGroup.RemoveAmbientZoneGroupIfActive();
 
-		for (int i = 0; i < libertyPeds.size(); i++)
+		/*for (int i = 0; i < libertyPeds.size(); i++)
 		{
 			PED::SET_PED_MODEL_IS_SUPPRESSED(GAMEPLAY::GET_HASH_KEY((char*)libertyPeds[i].c_str()), true);
 		}
@@ -332,9 +461,12 @@ namespace levelSwitch
 		for (int i = 0; i < libertyVehicles.size(); i++)
 		{
 			VEHICLE::SET_VEHICLE_MODEL_IS_SUPPRESSED(GAMEPLAY::GET_HASH_KEY((char*)libertyVehicles[i].c_str()), true);
-		}
+		}*/
 
-		for (int i = 0; i < libertyRadio.size(); i++)
+		//libertyPedGroup.SuppressZonedModels(true, false);
+		//libertyVehicleGroup.SuppressZonedModels(true, true);
+
+		/*for (int i = 0; i < libertyRadio.size(); i++)
 		{
 			AUDIO::LOCK_RADIO_STATION((char*)libertyRadio[i].c_str(), true);
 		}
@@ -342,28 +474,17 @@ namespace levelSwitch
 		for (int i = 0; i < santosRadio.size(); i++)
 		{
 			AUDIO::LOCK_RADIO_STATION((char*)santosRadio[i].c_str(), false);
-		}
+		}*/
+		//libertyRadioGroup.DisableRadioStationGroup();
+		//santosRadioGroup.EnableRadioStationGroup();
 
-		for (int i = 0; i < cayoInteriors.size(); i++)
-		{
-			STREAMING::REMOVE_IPL(const_cast<char*>(cayoInteriors[i].c_str()));
-		}
-
-		for (int i = 0; i < cayoInstancePlacement.size(); i++)
-		{
-			STREAMING::REMOVE_IPL(const_cast<char*>(cayoInstancePlacement[i].c_str()));
-		}
-		
-		for (int i = 0; i < cayoOccl.size(); i++)
-		{
-			STREAMING::REMOVE_IPL(const_cast<char*>(cayoOccl[i].c_str()));
-		}
-
-		for (int i = 0; i < cayoZones.size(); i++)
+		/*for (int i = 0; i < cayoZones.size(); i++)
 		{
 			int zoneId = ZONE::GET_ZONE_FROM_NAME_ID((char*)cayoZones[i].c_str());
 			ZONE::SET_ZONE_ENABLED(zoneId, false);
-		}
+		}*/
+		//cayoZoneGroup.DisableZoneGroup();
+
 		if (restrictedAreaClearance)
 			GAMEPLAY::TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME((char*)"restrictedareas");		   // responsible for restricted areas
 	}
@@ -499,13 +620,15 @@ namespace levelSwitch
 	{
 		if (!worldtravel::IsLosSantos())
 		{
-			if (worldtravel::MpMap::IsMPMapActive())
+			if (worldtravel::MpMap::IsMPMapActive() && NETWORK::NETWORK_IS_IN_SESSION())
 			{
-				for (int i = 0; i < santosMpForcedIpls.size(); i++)
+				/*for (int i = 0; i < santosMpForcedIpls.size(); i++)
 				{
 					if (STREAMING::IS_IPL_ACTIVE((char*)santosMpForcedIpls[i].c_str()))
 						STREAMING::REMOVE_IPL((char*)santosMpForcedIpls[i].c_str());
-				}
+				}*/
+				//santosMpForcedIplGroup.RemoveIplGroupIfActive();
+				losSantos.RemoveForcedIpls();
 			}
 		}
 	}
@@ -533,110 +656,6 @@ namespace levelSwitch
 			}
 		}
 		NETWORK::NETWORK_OVERRIDE_CLOCK_TIME(hours, minutes, seconds);
-	}
-
-	// Fix for Cayo Perico Island Hopper not functioning correctly.
-	void CayoPericoIslandHopperHelper()
-	{
-		if (!worldtravel::IsCayoPerico())
-		{
-			if (!hasCayoLoadedExternally && STREAMING::IS_IPL_ACTIVE("h4_islandairstrip_slod"))
-			{
-				for (int i = 0; i < cayoInteriors.size(); i++)
-				{
-					if (!STREAMING::IS_IPL_ACTIVE(const_cast<char*>(cayoInteriors[i].c_str())))
-					{
-						STREAMING::REQUEST_IPL(const_cast<char*>(cayoInteriors[i].c_str()));
-					}
-				}
-				for (int i = 0; i < cayoInstancePlacement.size(); i++)
-				{
-					if (!STREAMING::IS_IPL_ACTIVE(const_cast<char*>(cayoInstancePlacement[i].c_str())))
-					{
-						STREAMING::REQUEST_IPL(const_cast<char*>(cayoInstancePlacement[i].c_str()));
-					}
-				}
-				for (int i = 0; i < cayoOccl.size(); i++)
-				{
-					if (!STREAMING::IS_IPL_ACTIVE(const_cast<char*>(cayoOccl[i].c_str())))
-					{
-						STREAMING::REQUEST_IPL(const_cast<char*>(cayoOccl[i].c_str()));
-					}
-				}
-				hasCayoLoadedExternally = true;
-			}
-			else if (hasCayoLoadedExternally && !STREAMING::IS_IPL_ACTIVE("h4_islandairstrip_slod"))
-			{
-				for (int i = 0; i < cayoInteriors.size(); i++)
-				{
-					if (STREAMING::IS_IPL_ACTIVE(const_cast<char*>(cayoInteriors[i].c_str())))
-					{
-						STREAMING::REMOVE_IPL(const_cast<char*>(cayoInteriors[i].c_str()));
-					}
-				}
-				for (int i = 0; i < cayoInstancePlacement.size(); i++)
-				{
-					if (STREAMING::IS_IPL_ACTIVE(const_cast<char*>(cayoInstancePlacement[i].c_str())))
-					{
-						STREAMING::REMOVE_IPL(const_cast<char*>(cayoInstancePlacement[i].c_str()));
-					}
-				}
-				for (int i = 0; i < cayoOccl.size(); i++)
-				{
-					if (STREAMING::IS_IPL_ACTIVE(const_cast<char*>(cayoOccl[i].c_str())))
-					{
-						STREAMING::REMOVE_IPL(const_cast<char*>(cayoOccl[i].c_str()));
-					}
-				}
-				hasCayoLoadedExternally = false;
-			}
-		}
-	}
-
-	// Fix for interiors being flooded
-	void InteriorWaterFix()
-	{
-		//int playerInteriorId = INTERIOR::GET_INTERIOR_FROM_ENTITY(player);
-		Vector3 cameraCoords;
-		if (CAM::IS_GAMEPLAY_CAM_RENDERING())
-			cameraCoords = CAM::GET_GAMEPLAY_CAM_COORD();
-		else
-			cameraCoords = CAM::GET_CAM_COORD(CAM::GET_RENDERING_CAM());
-		float cameraCoordsX = cameraCoords.x;
-		float cameraCoordsY = cameraCoords.y;
-		float cameraCoordsZ = cameraCoords.z;
-		int playerInteriorId = INTERIOR::GET_INTERIOR_AT_COORDS(cameraCoordsX, cameraCoordsY, cameraCoordsZ);
-		
-		if (!worldtravel::IsLosSantos())
-		{
-			if ((playerInteriorId == INTERIOR::GET_INTERIOR_AT_COORDS(gr_grdlc_int_01[0], gr_grdlc_int_01[1], gr_grdlc_int_01[2]) ||
-				playerInteriorId == INTERIOR::GET_INTERIOR_AT_COORDS(xm_x17dlc_int_01[0], xm_x17dlc_int_01[1], xm_x17dlc_int_01[2]) ||
-				playerInteriorId == INTERIOR::GET_INTERIOR_AT_COORDS(xm_x17dlc_int_sub[0], xm_x17dlc_int_sub[1], xm_x17dlc_int_sub[2]) ||
-				playerInteriorId == INTERIOR::GET_INTERIOR_AT_COORDS(ba_dlc_int_03_ba[0], ba_dlc_int_03_ba[1], ba_dlc_int_03_ba[2]) ||
-				playerInteriorId == INTERIOR::GET_INTERIOR_AT_COORDS(h4_interior_0_int_sub[0], h4_interior_0_int_sub[1], h4_interior_0_int_sub[2]) ||
-				playerInteriorId == INTERIOR::GET_INTERIOR_AT_COORDS(dlc_int_01_xm3[0], dlc_int_01_xm3[1], dlc_int_01_xm3[2]) ||
-				playerInteriorId == INTERIOR::GET_INTERIOR_AT_COORDS(dlc_int_01_m23_1[0], dlc_int_01_m23_1[1], dlc_int_01_m23_1[2])) &&
-				playerInteriorId != 0 &&
-				!tempWaterSwapActive)
-			{
-				STREAMING::LOAD_GLOBAL_WATER_FILE(0);
-				PED::CLEAR_PED_WETNESS(playerPed);
-				tempWaterSwapActive = true;
-			}
-			else if (tempWaterSwapActive && playerInteriorId == 0)
-			{
-				//WAIT(1000);
-				if (worldtravel::IsCayoPerico())
-					STREAMING::LOAD_GLOBAL_WATER_FILE(1);
-				else if (worldtravel::IsLibertyCity())
-					STREAMING::LOAD_GLOBAL_WATER_FILE(2);
-				tempWaterSwapActive = false;
-				if (NETWORK::NETWORK_IS_IN_SESSION())
-				{
-					NETWORK::NETWORK_SET_PROPERTY_ID(100);
-				}
-			}
-		}
 	}
 
 
@@ -845,6 +864,35 @@ namespace levelSwitch
 				flyToCPBlipVisible = false;
 			}
 		}
+		else if (worldtravel::GetPlayerLocationID() == 4)
+		{
+
+			if (!airportBlipVisible)
+			{
+				UI::SET_BLIP_DISPLAY(AirportBlip, 0);
+				airportBlipVisible = false;
+			}
+			if (docksBlipVisible)
+			{
+				UI::SET_BLIP_DISPLAY(DocksBlip, 0);
+				docksBlipVisible = false;
+			}
+			if (flyToLSBlipVisible)
+			{
+				UI::SET_BLIP_DISPLAY(FlyToLSBlip, 0);
+				flyToLSBlipVisible = false;
+			}
+			if (flyToLCBlipVisible)
+			{
+				UI::SET_BLIP_DISPLAY(FlyToLCBlip, 0);
+				flyToLCBlipVisible = false;
+			}
+			if (flyToCPBlipVisible)
+			{
+				UI::SET_BLIP_DISPLAY(FlyToCPBlip, 0);
+				flyToCPBlipVisible = false;
+			}
+		}
 	}
 
 
@@ -882,60 +930,17 @@ namespace levelSwitch
 			UI::SET_BLIP_COORDS(FlyToLCBlip, FlyToLCFromCPCoords[0], FlyToLCFromCPCoords[1], 1200.0f);
 			UI::SET_BLIP_COORDS(FlyToCPBlip, 0.0f, 0.0f, 1200.0f);
 		}
-	}
-
-
-
-	// Blocks NPCs from spawning in unloaded areas
-	void NpcSpawnBlocker()
-	{
-		//block traffic and peds around Los Santos if it is not loaded
-		if (!STREAMING::IS_IPL_ACTIVE("cs5_lod"))
+		else if (blipLocationID == 4)
 		{
-			if (!ENTITY::IS_ENTITY_IN_AREA(playerPed, 2600.0f, -6600.0f, -10000.0f, 8300.0f, -2500.0f, 10000.0f, false, false, false) &&
-				!ENTITY::IS_ENTITY_IN_AREA(playerPed, 3000.0f, -2500.0f, -10000.0f, 8300.0f, -1700.0f, 10000.0f, false, false, false) &&
-				!ENTITY::IS_ENTITY_IN_AREA(playerPed, 3400.0f, -1700.0f, -10000.0f, 8300.0f, -900.0f, 10000.0f, false, false, false))
-			{
-				//worldtravel::HelpText::DisplayHelpText("NPCs blocked in this area when Los Santos is disabled.");
-				VEHICLE::SET_VEHICLE_DENSITY_MULTIPLIER_THIS_FRAME(0.0f);
-				VEHICLE::SET_RANDOM_VEHICLE_DENSITY_MULTIPLIER_THIS_FRAME(0.0f);
-				VEHICLE::SET_PARKED_VEHICLE_DENSITY_MULTIPLIER_THIS_FRAME(0.0f);
-				PED::SET_PED_DENSITY_MULTIPLIER_THIS_FRAME(0.0f);
-				PED::SET_SCENARIO_PED_DENSITY_MULTIPLIER_THIS_FRAME(0.0f, 0.0f);
-			}
-		}
-
-		//block traffic and peds around North Yankton/Cayo Perico if they're both not loaded
-		if (!STREAMING::IS_IPL_ACTIVE("prologuerd") && !STREAMING::IS_IPL_ACTIVE("h4_islandx"))
-		{
-			if (ENTITY::IS_ENTITY_IN_AREA(playerPed, 2200.0f, -5600.0f, -10000.0f, 4100.0f, -4000.0f, 10000.0f, false, false, false) ||
-				ENTITY::IS_ENTITY_IN_AREA(playerPed, 4100.0f, -5600.0f, -10000.0f, 6500.0f, -4600.0f, 10000.0f, false, false, false))
-			{
-				//worldtravel::HelpText::DisplayHelpText("NPCs blocked in this area when North Yankton and Cayo Perico are disabled.");
-				VEHICLE::SET_VEHICLE_DENSITY_MULTIPLIER_THIS_FRAME(0.0f);
-				VEHICLE::SET_RANDOM_VEHICLE_DENSITY_MULTIPLIER_THIS_FRAME(0.0f);
-				VEHICLE::SET_PARKED_VEHICLE_DENSITY_MULTIPLIER_THIS_FRAME(0.0f);
-				PED::SET_PED_DENSITY_MULTIPLIER_THIS_FRAME(0.0f);
-				PED::SET_SCENARIO_PED_DENSITY_MULTIPLIER_THIS_FRAME(0.0f, 0.0f);
-			}
-		}
-
-		//block traffic and peds around Liberty City if it's not loaded
-		if (!STREAMING::IS_IPL_ACTIVE("manhat06_slod"))
-		{
-			if (ENTITY::IS_ENTITY_IN_AREA(playerPed, 2600.0f, -4200.0f, -10000.0f, 8300.0f, -2500.0f, 10000.0f, false, false, false) ||
-				ENTITY::IS_ENTITY_IN_AREA(playerPed, 3000.0f, -2500.0f, -10000.0f, 8300.0f, -1700.0f, 10000.0f, false, false, false) ||
-				ENTITY::IS_ENTITY_IN_AREA(playerPed, 3400.0f, -1700.0f, -10000.0f, 8300.0f, -900.0f, 10000.0f, false, false, false))
-			{
-				//worldtravel::HelpText::DisplayHelpText("NPCs blocked in this area when Liberty City is disabled.");
-				VEHICLE::SET_VEHICLE_DENSITY_MULTIPLIER_THIS_FRAME(0.0f);
-				VEHICLE::SET_RANDOM_VEHICLE_DENSITY_MULTIPLIER_THIS_FRAME(0.0f);
-				VEHICLE::SET_PARKED_VEHICLE_DENSITY_MULTIPLIER_THIS_FRAME(0.0f);
-				PED::SET_PED_DENSITY_MULTIPLIER_THIS_FRAME(0.0f);
-				PED::SET_SCENARIO_PED_DENSITY_MULTIPLIER_THIS_FRAME(0.0f, 0.0f);
-			}
+			UI::SET_BLIP_COORDS(AirportBlip, 0.0f, 0.0f, 0.0f);
+			UI::SET_BLIP_COORDS(DocksBlip, 0.0f, 0.0f, 0.0f);
+			UI::SET_BLIP_COORDS(FlyToLSBlip, 0.0f, 0.0f, 0.0f);
+			UI::SET_BLIP_COORDS(FlyToLCBlip, 0.0f, 0.0f, 0.0f);
+			UI::SET_BLIP_COORDS(FlyToCPBlip, 0.0f, 0.0f, 0.0f);
 		}
 	}
+
+
 
 	/////////////////////////////////////////////////////////
 	////             Loading Helper Functions            ////
@@ -1036,41 +1041,41 @@ namespace levelSwitch
 		}
 	}
 
-	void loadMapLiberty(const std::vector<std::string>& scenarios,
-		const std::vector<std::string>& zones,
-		const std::vector<std::string>& ambientZones,
-		const std::vector<std::string>& pedModels,
-		const std::vector<std::string>& vehicleModels,
-		const std::vector<std::string>& radioStations,
+	void loadMapLiberty(//const std::vector<std::string>& scenarios,
+		//const std::vector<std::string>& zones,
+		//const std::vector<std::string>& ambientZones,
+		//const std::vector<std::string>& pedModels,
+		//const std::vector<std::string>& vehicleModels,
+		//const std::vector<std::string>& radioStations,
 		const std::vector<int>& trainTracks,
 		int trainFrequency = 120000)
 	{
-		enableScenarios(scenarios);
-		enableZones(zones);
-		enableAmbientZones(ambientZones);
-		unlockModels(pedModels, true);
-		unlockModels(vehicleModels, false);
-		unlockRadioStations(radioStations);
+		//enableScenarios(scenarios);
+		//enableZones(zones);
+		//enableAmbientZones(ambientZones);
+		//unlockModels(pedModels, true);
+		//unlockModels(vehicleModels, false);
+		//unlockRadioStations(radioStations);
 		setTrainTracksAndFrequency(trainTracks, trainFrequency);
 	}
 
-	void loadMapSantos(const std::vector<std::string>& scenarios,
-		const std::vector<std::string>& zones,
-		const std::vector<std::string>& ambientZones,
-		const std::vector<std::string>& pedModels,
-		const std::vector<std::string>& vehicleModels,
-		const std::vector<std::string>& radioStations,
+	void loadMapSantos(//const std::vector<std::string>& scenarios,
+		//const std::vector<std::string>& zones,
+		//const std::vector<std::string>& ambientZones,
+		//const std::vector<std::string>& pedModels,
+		//const std::vector<std::string>& vehicleModels,
+		//const std::vector<std::string>& radioStations,
 		const std::vector<int>& trainTracks,
-		std::vector<bool>& scenarioState,
-		std::vector<bool>& ambientZoneState,
+		//std::vector<bool>& scenarioState,
+		//std::vector<bool>& ambientZoneState,
 		int trainFrequency = 120000)
 	{
-		enableScenarios(scenarios, scenarioState);
-		enableZones(zones);
-		enableAmbientZones(ambientZones, ambientZoneState);
-		unlockModels(pedModels, true);
-		unlockModels(vehicleModels, false);
-		unlockRadioStations(radioStations);
+		//enableScenarios(scenarios, scenarioState);
+		//enableZones(zones);
+		//enableAmbientZones(ambientZones, ambientZoneState);
+		//unlockModels(pedModels, true);
+		//unlockModels(vehicleModels, false);
+		//unlockRadioStations(radioStations);
 		setTrainTracksAndFrequency(trainTracks, trainFrequency);
 	}
 
@@ -1092,19 +1097,23 @@ namespace levelSwitch
 			WAIT(1000); // 1 Second
 			requestIpls(santosMpIpls);
 		}*/
-		if (!NETWORK::NETWORK_IS_IN_SESSION())
+		/*if (!NETWORK::NETWORK_IS_IN_SESSION())
 		{
 			STREAMING::SET_ISLAND_ENABLED(const_cast<char*>("HeistIsland"), true);
 		}
 
-		enableScenarios(cayoScenarios);
-		requestIpls(cayoMpIpls);
-		enableZones(cayoZones);
-		enableAmbientZones(cayoAmbientZones);
+		//enableScenarios(cayoScenarios);
+		cayoScenarioGroup.RequestScenarioGroup(false);
+		//requestIpls(cayoMpIpls);
+		cayoMpIplGroup.RequestIplGroup(false);
+		//enableZones(cayoZones);
+		cayoZoneGroup.EnableZoneGroup();
+		//enableAmbientZones(cayoAmbientZones);
+		cayoAmbientZoneGroup.RequestAmbientZoneGroup(false);
 
 		UI::SET_USE_ISLAND_MAP(true);
-
-		int weatherID = std::rand() % cayoWeatherTypes.size();
+		*/
+		/*int weatherID = std::rand() % cayoWeatherTypes.size();
 		if (!NETWORK::NETWORK_IS_IN_SESSION())
 		{
 			GAMEPLAY::SET_WEATHER_TYPE_NOW(const_cast<char*>(cayoWeatherTypes[weatherID].c_str()));
@@ -1112,36 +1121,53 @@ namespace levelSwitch
 		else
 		{
 			GAMEPLAY::SET_WEATHER_TYPE_PERSIST(const_cast<char*>(cayoWeatherTypes[weatherID].c_str()));
-		}
+		}*/
+		/*cayoWeatherTypes.SetWeatherType();
 
 		worldtravel::PathNodeState::SetPathNodeState(2);
-		STREAMING::LOAD_GLOBAL_WATER_FILE(1);
+		STREAMING::LOAD_GLOBAL_WATER_FILE(1);*/
 		SetBlipsLocation(3);
 	}
 
 	// Load Liberty City
 	void loadLiberty()
 	{
-		//STREAMING::SET_ISLAND_ENABLED(const_cast<char*>("LibertyCity"), true);
-		requestIpls(libertyIpls);
+		/*//STREAMING::SET_ISLAND_ENABLED(const_cast<char*>("LibertyCity"), true);
+		
+
+		
+		//requestIpls(libertyIpls);
+		libertyIplGroup.RequestIplGroup(false);
 		// Request MP or SP IPLs based on session status
 		if (worldtravel::MpMap::IsMPMapActive())
 		{
-			requestIpls(libertyMpIpls);
+			//requestIpls(libertyMpIpls);
+			libertyMpIplGroup.RequestIplGroup(false);
 		}
 		else
 		{
-			requestIpls(libertySpIpls);
+			//requestIpls(libertySpIpls);
+			libertySpIplGroup.RequestIplGroup(false);
 		}
 		if (loadLibertyLODLights)
 		{
-			requestIpls(libertyLODLightIpls);
+			//requestIpls(libertyLODLightIpls);
+			libertyLODLightIplGroup.RequestIplGroup(false);
 		}
 
-		loadMapLiberty(libertyScenarios, libertyZones, libertyAmbientZones, libertyPeds, libertyVehicles, libertyRadio, { 12, 13, 14, 16, 17, 18 });
+		libertyScenarioGroup.RequestScenarioGroup(false);
+		libertyZoneGroup.EnableZoneGroup();
+		libertyAmbientZoneGroup.RequestAmbientZoneGroup(false);
+		libertyPedGroup.SuppressZonedModels(false, false);
+		libertyVehicleGroup.SuppressZonedModels(false, true);
+		libertyRadioGroup.EnableRadioStationGroup();*/
+		//loadMapLiberty(libertyScenarios, libertyZones, libertyAmbientZones, libertyPeds, libertyVehicles, libertyRadio, { 12, 13, 14, 16, 17, 18 });
+		loadMapLiberty({ 12, 13, 14, 16, 17, 18 });
 		
-		int weatherID = std::rand() % libertyWeatherTypes.size();
-		GAMEPLAY::SET_OVERRIDE_WEATHER(const_cast<char*>(libertyWeatherTypes[weatherID].c_str()));
+		/*int weatherID = std::rand() % libertyWeatherTypes.size();
+		GAMEPLAY::SET_OVERRIDE_WEATHER(const_cast<char*>(libertyWeatherTypes[weatherID].c_str()));*/
+		/*libertyWeatherTypes.SetWeatherType();
+
 		if (!NETWORK::NETWORK_IS_IN_SESSION())
 		{
 			//GAMEPLAY::SET_WEATHER_TYPE_NOW_PERSIST(const_cast<char*>(libertyWeatherTypes[weatherID].c_str()));
@@ -1154,34 +1180,45 @@ namespace levelSwitch
 		
 		worldtravel::PathNodeState::SetPathNodeState(1);
 		GRAPHICS::DISABLE_VEHICLE_DISTANTLIGHTS(true);
-		STREAMING::LOAD_GLOBAL_WATER_FILE(2);
+		STREAMING::LOAD_GLOBAL_WATER_FILE(2);*/
 		SetBlipsLocation(1);
 	}
 
 	// Load Los Santos
 	void loadSantos()
 	{
-		patches::farlods::SetVisible(true);
+		/*patches::farlods::SetVisible(true);
 
-		requestIpls(santosIpls, santosIplState);
+		//requestIpls(santosIpls, santosIplState);
+		santosIplGroup.RequestIplGroup(true);
 		// Request MP or SP IPLs based on session status
 		if (worldtravel::MpMap::IsMPMapActive())
 		{
-			requestIpls(santosMpIpls, santosMpIplState);
+			//requestIpls(santosMpIpls, santosMpIplState);
+			santosMpIplGroup.RequestIplGroup(true);
 		}
 		else
 		{
-			requestIpls(santosSpIpls, santosSpIplState);
+			//requestIpls(santosSpIpls, santosSpIplState);
+			santosSpIplGroup.RequestIplGroup(true);
 		}
 
-		requestIpls(modIpls);
+		//requestIpls(modIpls);
+		modIplGroup.RequestIplGroup(false);
+		santosScenarioGroup.RequestScenarioGroup(true);
+		santosZoneGroup.EnableZoneGroup();
+		santosAmbientZoneGroup.RequestAmbientZoneGroup(true);
+		santosPedGroup.SuppressZonedModels(false, false);
+		santosVehicleGroup.SuppressZonedModels(false, true);
+		santosRadioGroup.EnableRadioStationGroup();*/
 
-		loadMapSantos(santosScenarios, santosZones, santosAmbientZones, santosPeds, santosVehicles, santosRadio, { 0, 3 }, santosScenariosState, santosAmbientZonesState);
-		worldtravel::PathNodeState::SetPathNodeState(0);
+		//loadMapSantos(santosScenarios, santosZones, santosAmbientZones, santosPeds, santosVehicles, santosRadio, { 0, 3 }, santosScenariosState, santosAmbientZonesState);
+		loadMapSantos({ 0, 3 });
+		/*worldtravel::PathNodeState::SetPathNodeState(0);
 		GRAPHICS::DISABLE_VEHICLE_DISTANTLIGHTS(false);
-		STREAMING::LOAD_GLOBAL_WATER_FILE(0);
+		STREAMING::LOAD_GLOBAL_WATER_FILE(0);*/
 		SetBlipsLocation(0);
-		STREAMING::_SET_MAPDATACULLBOX_ENABLED((char*)"HeistIsland", false);
+		/*STREAMING::_SET_MAPDATACULLBOX_ENABLED((char*)"HeistIsland", false);
 
 		// if in singleplayer
 		if (!NETWORK::NETWORK_IS_IN_SESSION())
@@ -1195,9 +1232,9 @@ namespace levelSwitch
 			{
 				GAMEPLAY::DISABLE_POLICE_RESTART(i, false);
 			}
-		}
+		}*/
 
-		int weatherID = std::rand() % santosWeatherTypes.size();
+		/*int weatherID = std::rand() % santosWeatherTypes.size();
 		// if in multiplayer
 		if (NETWORK::NETWORK_IS_IN_SESSION())
 		{
@@ -1210,7 +1247,9 @@ namespace levelSwitch
 			GAMEPLAY::CLEAR_WEATHER_TYPE_PERSIST();
 		}
 
-		GAMEPLAY::CLEAR_OVERRIDE_WEATHER();
+		GAMEPLAY::CLEAR_OVERRIDE_WEATHER();*/
+		/*santosWeatherTypes.SetWeatherType();
+		santosWeatherTypes.ResetWeatherType(true);
 
 		if (!NETWORK::NETWORK_IS_IN_SESSION())
 		{
@@ -1221,19 +1260,23 @@ namespace levelSwitch
 			if (!restrictedAreaClearance)
 				RequestScript("restrictedareas", 1424);        // responsible for restricted areas
 			RequestScript("vehicle_gen_controller", 1424); // responsible for player businesses / vehicle blips
-		}
+		}*/
 	}
 
 	// Load North Yankton
 	void loadYankton()
 	{
-		requestIpls(yanktonIpls);
-		enableZones(yanktonZones);
-		enableAmbientZones(yanktonAmbientZones);
-		UI::SET_MINIMAP_IN_PROLOGUE(true);
+		/*//requestIpls(yanktonIpls);
+		yanktonIplGroup.RequestIplGroup(false);
+		//enableZones(yanktonZones);
+		yanktonZoneGroup.EnableZoneGroup();
+		//enableAmbientZones(yanktonAmbientZones);
+		yanktonAmbientZoneGroup.RequestAmbientZoneGroup(false);
+		UI::SET_MINIMAP_IN_PROLOGUE(true);*/
 
-		int weatherID = std::rand() % yanktonWeatherTypes.size();
-		GAMEPLAY::SET_OVERRIDE_WEATHER(const_cast<char*>(yanktonWeatherTypes[weatherID].c_str()));
+		/*int weatherID = std::rand() % yanktonWeatherTypes.size();
+		GAMEPLAY::SET_OVERRIDE_WEATHER(const_cast<char*>(yanktonWeatherTypes[weatherID].c_str()));*/
+		//yanktonWeatherTypes.SetWeatherType();
 		// if in multiplayer
 		/*if (NETWORK::NETWORK_IS_IN_SESSION())
 		{
@@ -1243,12 +1286,17 @@ namespace levelSwitch
 		{
 			GAMEPLAY::SET_WEATHER_TYPE_PERSIST(const_cast<char*>(yanktonWeatherTypes[weatherID].c_str()));
 		}*/
-		PATHFIND::SET_ROADS_IN_ANGLED_AREA(5526.24f, -5137.23f, 61.78925f, 3679.327f, -4973.879f, 125.0828f, 192, false, true, true);
+		/*PATHFIND::SET_ROADS_IN_ANGLED_AREA(5526.24f, -5137.23f, 61.78925f, 3679.327f, -4973.879f, 125.0828f, 192, false, true, true);
 		PATHFIND::SET_ROADS_IN_ANGLED_AREA(3691.211f, -4941.24f, 94.59368f, 3511.115f, -4869.191f, 126.7621f, 16, false, true, true);
 		PATHFIND::SET_ROADS_IN_ANGLED_AREA(3510.004f, -4865.81f, 94.69557f, 3204.424f, -4833.817f, 126.8152f, 16, false, true, true);
 		PATHFIND::SET_ROADS_IN_ANGLED_AREA(3186.534f, -4832.798f, 109.8148f, 3202.187f, -4833.993f, 114.815f, 16, false, true, true);
-		worldtravel::PathNodeState::SetPathNodeState(1);
+		worldtravel::PathNodeState::SetPathNodeState(1);*/
 		SetBlipsLocation(2);
+	}
+
+	void loadFuegos()
+	{
+		SetBlipsLocation(4);
 	}
 
 	/////////////////////////////////////////////////////////
@@ -1345,31 +1393,31 @@ namespace levelSwitch
 		}
 	}
 
-	void unloadMapLiberty(const std::vector<std::string>& scenarios,
-		const std::vector<std::string>& zones, const std::vector<std::string>& ambientZones, const std::vector<std::string>& peds,
-		const std::vector<std::string>& vehicles, const std::vector<std::string>& radios,
+	void unloadMapLiberty(//const std::vector<std::string>& scenarios,
+		/*const std::vector<std::string>& zones,*/ /*const std::vector<std::string>& ambientZones,*/ /*const std::vector<std::string>& peds,
+		const std::vector<std::string>& vehicles,*/ /*const std::vector<std::string>& radios,*/
 		const std::vector<int>& trainTracks)
 	{
-		disableScenarios(scenarios);
-		disableZones(zones);
-		disableAmbientZones(ambientZones);
-		suppressModels(peds);
-		suppressModels(vehicles, true);
-		lockRadioStations(radios);
+		//disableScenarios(scenarios);
+		//disableZones(zones);
+		//disableAmbientZones(ambientZones);
+		//suppressModels(peds);
+		//suppressModels(vehicles, true);
+		//lockRadioStations(radios);
 		switchTrainTracks(trainTracks, false);
 	}
 
-	void unloadMapSantos(const std::vector<std::string>& scenarios,
-		const std::vector<std::string>& zones, const std::vector<std::string>& ambientZones, const std::vector<std::string>& peds,
-		const std::vector<std::string>& vehicles, const std::vector<std::string>& radios,
-		const std::vector<int>& trainTracks, std::vector<bool>& scenarioState, std::vector<bool>& ambientZoneState)
+	void unloadMapSantos(//const std::vector<std::string>& scenarios,
+		/*const std::vector<std::string>& zones,*/ /*const std::vector<std::string>& ambientZones,(/ /*const std::vector<std::string>& peds,
+		const std::vector<std::string>& vehicles,*/ /*const std::vector<std::string>& radios,*/
+		const std::vector<int>& trainTracks/*, std::vector<bool>& scenarioState,*/ /*std::vector<bool>& ambientZoneState*/)
 	{
-		disableScenarios(scenarios, scenarioState);
-		disableZones(zones);
-		disableAmbientZones(ambientZones, ambientZoneState);
-		suppressModels(peds);
-		suppressModels(vehicles, true);
-		lockRadioStations(radios);
+		//disableScenarios(scenarios, scenarioState);
+		//disableZones(zones);
+		//disableAmbientZones(ambientZones, ambientZoneState);
+		//suppressModels(peds);
+		//suppressModels(vehicles, true);
+		//lockRadioStations(radios);
 		switchTrainTracks(trainTracks, false);
 	}
 
@@ -1380,7 +1428,8 @@ namespace levelSwitch
 	// Unload the Cayo Perico Island
 	void unloadCayo()
 	{
-		removeIpls(cayoMpIpls);
+		//removeIpls(cayoMpIpls);
+		cayoMpIplGroup.RemoveIplGroup(false);
 		/*if (!worldtravel::MpMap::IsMPMapActive())
 		{
 			DLC2::_UNLOAD_MP_DLC_MAPS();
@@ -1394,8 +1443,15 @@ namespace levelSwitch
 			WAIT(1000); // 1 Second
 		}*/
 
+		//disableScenarios(cayoScenarios);
+		cayoScenarioGroup.RemoveScenarioGroup(false);
+		//disableZones(cayoZones);
+		cayoZoneGroup.DisableZoneGroup();
+		//disableAmbientZones(cayoAmbientZones);
+		cayoAmbientZoneGroup.RemoveAmbientZoneGroup(false);
+
 		// if in multiplayer
-		if (NETWORK::NETWORK_IS_IN_SESSION())
+		/*if (NETWORK::NETWORK_IS_IN_SESSION())
 		{
 			GAMEPLAY::CLEAR_WEATHER_TYPE_NOW_PERSIST_NETWORK(1);
 		}
@@ -1403,7 +1459,8 @@ namespace levelSwitch
 		{
 			GAMEPLAY::CLEAR_WEATHER_TYPE_PERSIST();
 		}
-		GAMEPLAY::CLEAR_OVERRIDE_WEATHER();
+		GAMEPLAY::CLEAR_OVERRIDE_WEATHER();*/
+		cayoWeatherTypes.ResetWeatherType(false);
 
 		// if in singleplayer
 		if (!NETWORK::NETWORK_IS_IN_SESSION())
@@ -1412,9 +1469,7 @@ namespace levelSwitch
 		}
 		WAIT(1000);
 
-		disableScenarios(cayoScenarios);
-		disableZones(cayoZones);
-		disableAmbientZones(cayoAmbientZones);
+		
 
 		UI::SET_USE_ISLAND_MAP(false);
 	}
@@ -1422,19 +1477,41 @@ namespace levelSwitch
 	// Unload Liberty City
 	void unloadLiberty()
 	{
-		Settings::Load();
+		/*//Settings::Load();
 		//STREAMING::SET_ISLAND_ENABLED(const_cast<char*>("LibertyCity"), false);
-		WAIT(1000);
+		//WAIT(1000);
 
-		removeIpls(libertyIpls);
+		//removeIpls(libertyIpls);
+		libertyIplGroup.RemoveIplGroup(false);
 		// Remove MP or SP IPLs based on session status
 		if (worldtravel::MpMap::IsMPMapActive())
-			removeIpls(libertyMpIpls);
+		{
+			//removeIpls(libertyMpIpls);
+			libertyMpIplGroup.RemoveIplGroup(false);
+		}
 		else
-			removeIpls(libertySpIpls);
+		{
+			//removeIpls(libertySpIpls);
+			libertySpIplGroup.RemoveIplGroup(false);
+		}
+		if (loadLibertyLODLights)
+		{
+			//removeIpls(libertyLODLightIpls);
+			libertyLODLightIplGroup.RemoveIplGroup(false);
+		}
+
+		libertyScenarioGroup.RemoveScenarioGroup(false);
+		libertyZoneGroup.DisableZoneGroup();
+		libertyAmbientZoneGroup.RemoveAmbientZoneGroup(false);
+		libertyPedGroup.SuppressZonedModels(true, false);
+		libertyVehicleGroup.SuppressZonedModels(true, true);
+		libertyRadioGroup.DisableRadioStationGroup();*/
+		//unloadMapLiberty(libertyScenarios, libertyZones, libertyAmbientZones, libertyPeds, libertyVehicles, libertyRadio, { 12, 13, 14, 16, 17, 18 });
+		unloadMapLiberty({ 12, 13, 14, 16, 17, 18 });
+
 
 		// if in multiplayer
-		if (NETWORK::NETWORK_IS_IN_SESSION())
+		/*if (NETWORK::NETWORK_IS_IN_SESSION())
 		{
 			GAMEPLAY::CLEAR_WEATHER_TYPE_NOW_PERSIST_NETWORK(1);
 		}
@@ -1442,33 +1519,45 @@ namespace levelSwitch
 		{
 			GAMEPLAY::CLEAR_WEATHER_TYPE_PERSIST();
 		}
-		GAMEPLAY::CLEAR_OVERRIDE_WEATHER();
+		GAMEPLAY::CLEAR_OVERRIDE_WEATHER();*/
+		/*libertyWeatherTypes.ResetWeatherType(false);
 
 		if (!NETWORK::NETWORK_IS_IN_SESSION())
-			UI::_SET_MINIMAP_REVEALED(false);
+			UI::_SET_MINIMAP_REVEALED(false);*/
 
-		if (Settings::EnableLibertyCityLODLights)
-		{
-			removeIpls(libertyLODLightIpls);
-		}
+		
 
-		unloadMapLiberty(libertyScenarios, libertyZones, libertyAmbientZones, libertyPeds, libertyVehicles, libertyRadio, { 12, 13, 14, 16, 17, 18 });
+		
 	}
 
 	// Unload Los Santos
 	void unloadSantos()
 	{
-		patches::farlods::SetVisible(false);
+		/*patches::farlods::SetVisible(false);
 
-		removeIpls(santosIpls, santosIplState);
+		//removeIpls(santosIpls, santosIplState);
+		santosIplGroup.RemoveIplGroup(true);
 		// Remove MP or SP IPLs based on session status
 		if (worldtravel::MpMap::IsMPMapActive())
-			removeIpls(santosMpIpls, santosMpIplState);
+		{
+			//removeIpls(santosMpIpls, santosMpIplState);
+			santosMpIplGroup.RemoveIplGroup(true);
+		}
 		else
-			removeIpls(santosSpIpls, santosSpIplState);
+		{
+			//removeIpls(santosSpIpls, santosSpIplState);
+			santosSpIplGroup.RemoveIplGroup(true);
+		}
 
-		unloadMapSantos(santosScenarios, santosZones, santosAmbientZones, santosPeds, santosVehicles, santosRadio, { 0, 3 }, santosScenariosState, santosAmbientZonesState);
-
+		santosScenarioGroup.RemoveScenarioGroup(true);
+		santosZoneGroup.DisableZoneGroup();
+		santosAmbientZoneGroup.RemoveAmbientZoneGroup(true);
+		santosPedGroup.SuppressZonedModels(true, false);
+		santosVehicleGroup.SuppressZonedModels(true, true);
+		santosRadioGroup.DisableRadioStationGroup();*/
+		//unloadMapSantos(santosScenarios, santosZones, santosAmbientZones, santosPeds, santosVehicles, santosRadio, { 0, 3 }, santosScenariosState, santosAmbientZonesState);
+		unloadMapSantos({ 0, 3 });
+		
 		// if in multiplayer
 		/*if (NETWORK::NETWORK_IS_IN_SESSION())
 		{
@@ -1481,7 +1570,7 @@ namespace levelSwitch
 		GAMEPLAY::CLEAR_OVERRIDE_WEATHER();*/
 
 		// if in singleplayer
-		if (!NETWORK::NETWORK_IS_IN_SESSION())
+		/*if (!NETWORK::NETWORK_IS_IN_SESSION())
 		{
 			UI::_SET_MINIMAP_REVEALED(true);
 			for (int i = 0; i < 5; i++)
@@ -1501,15 +1590,18 @@ namespace levelSwitch
 			if (!restrictedAreaClearance)
 				GAMEPLAY::TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME((char*)"restrictedareas");		   // responsible for restricted areas
 			GAMEPLAY::TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME((char*)"vehicle_gen_controller");   // responsible for player businesses / vehicle blips
-		}
+		}*/
 	}
 
 	// Unload North Yankton
 	void unloadYankton()
 	{
-		removeIpls(yanktonIpls);
-		disableZones(yanktonZones);
-		disableAmbientZones(yanktonAmbientZones);
+		//removeIpls(yanktonIpls);
+		yanktonIplGroup.RemoveIplGroup(false);
+		//disableZones(yanktonZones);
+		yanktonZoneGroup.DisableZoneGroup();
+		//disableAmbientZones(yanktonAmbientZones);
+		yanktonAmbientZoneGroup.RemoveAmbientZoneGroup(false);
 		UI::SET_MINIMAP_IN_PROLOGUE(false);
 		PATHFIND::SET_ROADS_IN_ANGLED_AREA(5526.24f, -5137.23f, 61.78925f, 3679.327f, -4973.879f, 125.0828f, 192, false, false, true);
 		PATHFIND::SET_ROADS_IN_ANGLED_AREA(3691.211f, -4941.24f, 94.59368f, 3511.115f, -4869.191f, 126.7621f, 16, false, false, true);
@@ -1517,7 +1609,7 @@ namespace levelSwitch
 		PATHFIND::SET_ROADS_IN_ANGLED_AREA(3186.534f, -4832.798f, 109.8148f, 3202.187f, -4833.993f, 114.815f, 16, false, false, true);
 		
 		// if in multiplayer
-		if (NETWORK::NETWORK_IS_IN_SESSION())
+		/*if (NETWORK::NETWORK_IS_IN_SESSION())
 		{
 			GAMEPLAY::CLEAR_WEATHER_TYPE_NOW_PERSIST_NETWORK(1);
 		}
@@ -1525,7 +1617,8 @@ namespace levelSwitch
 		{
 			GAMEPLAY::CLEAR_WEATHER_TYPE_PERSIST();
 		}
-		GAMEPLAY::CLEAR_OVERRIDE_WEATHER();
+		GAMEPLAY::CLEAR_OVERRIDE_WEATHER();*/
+		yanktonWeatherTypes.ResetWeatherType(false);
 	}
 
 	// used to handle manual flight between maps
@@ -1547,7 +1640,8 @@ namespace levelSwitch
 				CAM::DO_SCREEN_FADE_OUT(800);
 				WAIT(800);
 				worldtravel::SetPlayerLocationID(-1);
-				loadLiberty();
+				unloadSantos();
+				losSantos.UnloadLevel();
 				ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToLSFromLCCoords[0] + 1500.00f, FlyToLSFromLCCoords[1] + 1500.00f, playerAltitude, 0, 0, 1);
 				ENTITY::SET_ENTITY_HEADING(player, 300.0f);
 				CAM::SET_GAMEPLAY_CAM_RELATIVE_HEADING(0.0f);
@@ -1561,7 +1655,8 @@ namespace levelSwitch
 				{
 					NetworkClockController(true);
 				}
-				unloadSantos();
+				loadLiberty();
+				libertyCity.LoadLevel();
 				worldtravel::SetPlayerLocationID(1);
 				CAM::DO_SCREEN_FADE_IN(800);
 			}
@@ -1572,7 +1667,8 @@ namespace levelSwitch
 				CAM::DO_SCREEN_FADE_OUT(800);
 				WAIT(800);
 				worldtravel::SetPlayerLocationID(-1);
-				loadCayo();
+				unloadSantos();
+				losSantos.UnloadLevel();
 
 				if (!NETWORK::NETWORK_IS_IN_SESSION())
 				{
@@ -1601,7 +1697,8 @@ namespace levelSwitch
 				{
 					NetworkClockController(true);
 				}
-				unloadSantos();
+				loadCayo();
+				cayoPerico.LoadLevel();
 				worldtravel::SetPlayerLocationID(3);
 				CAM::DO_SCREEN_FADE_IN(800);
 			}
@@ -1614,7 +1711,8 @@ namespace levelSwitch
 				CAM::DO_SCREEN_FADE_OUT(800);
 				WAIT(800);
 				worldtravel::SetPlayerLocationID(-1);
-				loadSantos();
+				unloadLiberty();
+				libertyCity.UnloadLevel();
 				ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToLCFromLSCoords[0] - 1500.00f, FlyToLCFromLSCoords[1] - 1500.00f, playerAltitude, 0, 0, 1);
 				ENTITY::SET_ENTITY_HEADING(player, 130.0f);
 				CAM::SET_GAMEPLAY_CAM_RELATIVE_HEADING(0.0f);
@@ -1629,7 +1727,8 @@ namespace levelSwitch
 					NetworkClockController(false);
 					NETWORK::NETWORK_CLEAR_CLOCK_TIME_OVERRIDE();
 				}
-				unloadLiberty();
+				loadSantos();
+				losSantos.UnloadLevel();
 				worldtravel::SetPlayerLocationID(0);
 				CAM::DO_SCREEN_FADE_IN(800);
 
@@ -1642,7 +1741,8 @@ namespace levelSwitch
 				CAM::DO_SCREEN_FADE_OUT(800);
 				WAIT(800);
 				worldtravel::SetPlayerLocationID(-1);
-				unloadLiberty();
+				libertyCity.UnloadLevel();
+				worldtravel::SetPlayerLocationID(3);
 				if (!NETWORK::NETWORK_IS_IN_SESSION())
 				{
 					ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToLCFromCPCoords[0] + 1500.00f, FlyToLCFromCPCoords[1] - 1500.00f, playerAltitude, 0, 0, 1);
@@ -1666,8 +1766,9 @@ namespace levelSwitch
 				{
 					TIME::ADD_TO_CLOCK_TIME(6, 0, 0);
 				}
+				unloadLiberty();
 				loadCayo();
-				worldtravel::SetPlayerLocationID(3);
+				cayoPerico.UnloadLevel();
 				CAM::DO_SCREEN_FADE_IN(800);
 
 			}
@@ -1690,7 +1791,7 @@ namespace levelSwitch
 			else
 			{
 				if (!ENTITY::IS_ENTITY_DEAD(playerPed) &&
-					!ENTITY::IS_ENTITY_IN_AREA(playerPed, CayoPericoWestBound, CayoPericoEastBound, -10000.0f, CayoPericoSouthBound, CayoPericoNorthBound, 10000.0f, false, false, false))
+					!ENTITY::IS_ENTITY_IN_AREA(playerPed, CayoPericoWestBound, CayoPericoSouthBound, -10000.0f, CayoPericoEastBound, CayoPericoNorthBound, 10000.0f, false, false, false))
 				{
 					float playerHeading = ENTITY::GET_ENTITY_HEADING(player);
 					if ((playerHeading >= CayoPericoMPDestHeading) && playerHeading <= 180.0f + CayoPericoMPDestHeading)
@@ -1709,7 +1810,8 @@ namespace levelSwitch
 				CAM::DO_SCREEN_FADE_OUT(800);
 				WAIT(800);
 				worldtravel::SetPlayerLocationID(-1);
-				unloadCayo();
+				//unloadCayo();
+				cayoPerico.UnloadLevel();
 				ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToCPFromLSCoords[0] - 1500.00f, FlyToCPFromLSCoords[1] + 1500.00f, playerAltitude, 0, 0, 1);
 				ENTITY::SET_ENTITY_HEADING(player, 45.0f);
 				CAM::SET_GAMEPLAY_CAM_RELATIVE_HEADING(0.0f);
@@ -1725,6 +1827,7 @@ namespace levelSwitch
 					NETWORK::NETWORK_CLEAR_CLOCK_TIME_OVERRIDE();
 				}
 				loadSantos();
+				losSantos.LoadLevel();
 				worldtravel::SetPlayerLocationID(0);
 				CAM::DO_SCREEN_FADE_IN(800);
 			}
@@ -1733,7 +1836,8 @@ namespace levelSwitch
 				CAM::DO_SCREEN_FADE_OUT(800);
 				WAIT(800);
 				worldtravel::SetPlayerLocationID(-1);
-				unloadCayo();
+				//unloadCayo();
+				cayoPerico.UnloadLevel();
 				ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToCPFromLCCoords[0] - 1500.00f, FlyToCPFromLCCoords[1] + 1500.00f, playerAltitude, 0, 0, 1);
 				ENTITY::SET_ENTITY_HEADING(player, 10.0f);
 				CAM::SET_GAMEPLAY_CAM_RELATIVE_HEADING(0.0f);
@@ -1744,10 +1848,58 @@ namespace levelSwitch
 					TIME::ADD_TO_CLOCK_TIME(4, 0, 0);
 				}
 				loadLiberty();
+				libertyCity.LoadLevel();
 				worldtravel::SetPlayerLocationID(1);
 				CAM::DO_SCREEN_FADE_IN(800);
 			}
 		}
+	}
+
+	// Cutscene
+	void PlayFlightCutscene(std::string cutsceneName, int flags, bool playbackList, bool start, bool end, bool stopImmediately, bool fadeVal0, bool fadeVal1, bool fadeVal2, bool fadeVal3)
+	{
+		if (playbackList)
+			CUTSCENE::REQUEST_CUTSCENE_WITH_PLAYBACK_LIST(const_cast<char*>(cutsceneName.c_str()), 1, flags);
+		else
+			CUTSCENE::REQUEST_CUTSCENE(const_cast<char*>(cutsceneName.c_str()), flags);
+		CUTSCENE::SET_CUTSCENE_PED_COMPONENT_VARIATION_FROM_PED("MP_1", playerPed, 0);
+		CUTSCENE::REGISTER_ENTITY_FOR_CUTSCENE(playerPed, "MP_1", 0, 0, 64);
+		CUTSCENE::SET_CUTSCENE_FADE_VALUES(true, true, true, true);
+		CUTSCENE::START_CUTSCENE(0);
+		if (NETWORK::NETWORK_IS_IN_SESSION() && start)
+		{
+			NETWORK::NETWORK_SET_IN_MP_CUTSCENE(true, true);
+		}
+		while (CUTSCENE::IS_CUTSCENE_ACTIVE())
+		{
+			WAIT(0);
+		}
+		if (stopImmediately)
+			CUTSCENE::STOP_CUTSCENE_IMMEDIATELY();
+		CUTSCENE::REMOVE_CUTSCENE();
+
+		if (NETWORK::NETWORK_IS_IN_SESSION() && end)
+		{
+			NETWORK::NETWORK_SET_IN_MP_CUTSCENE(false, false);
+		}
+		CAM::DO_SCREEN_FADE_OUT(0);
+	}
+
+	// Spawn rental car
+	void SpawnRentalCar(std::string vehicleName, float x, float y, float z, float heading, bool warpPlayerIntoVehicle)
+	{
+
+		rentalVehicleHash = GAMEPLAY::GET_HASH_KEY(const_cast<char*>(vehicleName.c_str()));
+		ENTITY::SET_ENTITY_HEADING(playerPed, 86.0f);
+		STREAMING::REQUEST_MODEL(rentalVehicleHash);
+		while (!STREAMING::HAS_MODEL_LOADED(rentalVehicleHash))
+		{
+			WAIT(0);
+		}
+		rentalVehicle = VEHICLE::CREATE_VEHICLE(rentalVehicleHash, x, y, z, heading, true, true, false);
+		if (warpPlayerIntoVehicle)
+			AI::TASK_WARP_PED_INTO_VEHICLE(playerPed, rentalVehicle, -1);
+		STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(rentalVehicleHash);
 	}
 
 	// Airport Travel from Los Santos
@@ -1777,29 +1929,26 @@ namespace levelSwitch
 						worldtravel::SetPlayerLocationID(-1);
 						int maxWanted = PLAYER::GET_MAX_WANTED_LEVEL();
 						PLAYER::SET_MAX_WANTED_LEVEL(0);
-						CUTSCENE::REQUEST_CUTSCENE((char*)"hs4_lsa_take_nimb2", 8);
-						CUTSCENE::SET_CUTSCENE_PED_COMPONENT_VARIATION_FROM_PED("MP_1", playerPed, 0);
-						CUTSCENE::REGISTER_ENTITY_FOR_CUTSCENE(playerPed, "MP_1", 0, 0, 64);
-						CUTSCENE::SET_CUTSCENE_FADE_VALUES(true, true, true, true);
-						CUTSCENE::START_CUTSCENE(0);
 						ENTITY::FREEZE_ENTITY_POSITION(playerPed, true);
-						if (NETWORK::NETWORK_IS_IN_SESSION())
-						{
-							NETWORK::NETWORK_SET_IN_MP_CUTSCENE(true, true);
-						}
-						while (CUTSCENE::IS_CUTSCENE_ACTIVE())
-						{
-							WAIT(0);
-						}
-						ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToLCFromLSCoords[0] - 1500.00f, FlyToLCFromLSCoords[1] - 1500.00f, FlyToLCFromLSCoords[2] + 1500.00f, 0, 0, 1);
 						if (destination == 1)
-							loadLiberty();
+							PlayFlightCutscene("hs4_lsa_take_nimb2", 8, false, true, false, false, true, true, true, true);
 						else if (destination == 2)
-							loadYankton();
-						CUTSCENE::REMOVE_CUTSCENE();
-						CAM::DO_SCREEN_FADE_OUT(0);
+							PlayFlightCutscene("hs4_lsa_take_nimb2", 8, false, true, false, true, true, true, true, true);
+
+						ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToLCFromLSCoords[0] - 1500.00f, FlyToLCFromLSCoords[1] - 1500.00f, FlyToLCFromLSCoords[2] + 1500.00f, 0, 0, 1);
 						unloadSantos();
+						losSantos.UnloadLevel();
 						WAIT(100);
+						if (destination == 1)
+						{
+							loadLiberty();
+							libertyCity.LoadLevel();
+						}
+						else if (destination == 2)
+						{
+							loadYankton();
+							northYankton.LoadLevel();
+						}
 						if (destination == 1)
 						{
 							ENTITY::SET_ENTITY_COORDS_NO_OFFSET(playerPed, FrancisIntAirportArrival[0], FrancisIntAirportArrival[1], FrancisIntAirportArrival[2], 0, 0, 1);
@@ -1808,17 +1957,7 @@ namespace levelSwitch
 						else if (destination == 2)
 						{
 							ENTITY::SET_ENTITY_COORDS_NO_OFFSET(playerPed, NorthYanktonAirportArrival[0], NorthYanktonAirportArrival[1], NorthYanktonAirportArrival[2], 0, 0, 1);
-							ENTITY::SET_ENTITY_HEADING(playerPed, 86.0f);
-							yanktonVehicleHash = GAMEPLAY::GET_HASH_KEY("asea2");
-							ENTITY::SET_ENTITY_HEADING(playerPed, 86.0f);
-							STREAMING::REQUEST_MODEL(yanktonVehicleHash);
-							while (!STREAMING::HAS_MODEL_LOADED(yanktonVehicleHash))
-							{
-								WAIT(0);
-							}
-							yanktonVehicle = VEHICLE::CREATE_VEHICLE(yanktonVehicleHash, NorthYanktonAirportArrival[0], NorthYanktonAirportArrival[1], NorthYanktonAirportArrival[2], 86.0f, true, true, false);
-							AI::TASK_WARP_PED_INTO_VEHICLE(playerPed, yanktonVehicle, -1);
-							STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(yanktonVehicleHash);
+							SpawnRentalCar("asea2", NorthYanktonAirportArrival[0], NorthYanktonAirportArrival[1], NorthYanktonAirportArrival[2], 86.0f, true);
 						}
 						CAM::SET_GAMEPLAY_CAM_RELATIVE_HEADING(0.0f);
 						CAM::SET_GAMEPLAY_CAM_RELATIVE_PITCH(0.0f, 0.0f);
@@ -1835,25 +1974,9 @@ namespace levelSwitch
 						}
 						if (destination == 1)
 						{
-							CUTSCENE::REQUEST_CUTSCENE_WITH_PLAYBACK_LIST((char*)"lc_lca_land_nimb", 1, 24);
-							CUTSCENE::SET_CUTSCENE_PED_COMPONENT_VARIATION_FROM_PED("MP_1", playerPed, 0);
-							CUTSCENE::REGISTER_ENTITY_FOR_CUTSCENE(playerPed, "MP_1", 0, 0, 64);
-							CUTSCENE::SET_CUTSCENE_FADE_VALUES(true, true, true, true);
-							CUTSCENE::START_CUTSCENE(0);
-							CAM::DO_SCREEN_FADE_IN(250);
-							while (CUTSCENE::IS_CUTSCENE_ACTIVE())
-							{
-								WAIT(0);
-							}
-							CUTSCENE::STOP_CUTSCENE_IMMEDIATELY();
-							CUTSCENE::REMOVE_CUTSCENE();
-						}
-						if (NETWORK::NETWORK_IS_IN_SESSION())
-						{
-							NETWORK::NETWORK_SET_IN_MP_CUTSCENE(false, false);
+							PlayFlightCutscene("lc_lca_land_nimb", 24, true, false, true, true, true, true, true, true);
 						}
 						ENTITY::FREEZE_ENTITY_POSITION(playerPed, false);
-						CAM::DO_SCREEN_FADE_OUT(0);
 						if (destination == 1)
 							ENTITY::SET_ENTITY_HEADING(playerPed, 97.4f);
 						else if (destination == 2)
@@ -1898,29 +2021,25 @@ namespace levelSwitch
 						worldtravel::SetPlayerLocationID(-1);
 						int maxWanted = PLAYER::GET_MAX_WANTED_LEVEL();
 						PLAYER::SET_MAX_WANTED_LEVEL(0);
-						CUTSCENE::REQUEST_CUTSCENE((char*)"lc_lca_take_nimb2", 8);
-						CUTSCENE::SET_CUTSCENE_PED_COMPONENT_VARIATION_FROM_PED("MP_1", playerPed, 0);
-						CUTSCENE::REGISTER_ENTITY_FOR_CUTSCENE(playerPed, "MP_1", 0, 0, 64);
-						CUTSCENE::SET_CUTSCENE_FADE_VALUES(true, true, true, true);
 						ENTITY::FREEZE_ENTITY_POSITION(playerPed, true);
-						CUTSCENE::START_CUTSCENE(0);
-						if (NETWORK::NETWORK_IS_IN_SESSION())
-						{
-							NETWORK::NETWORK_SET_IN_MP_CUTSCENE(true, true);
-						}
-						while (CUTSCENE::IS_CUTSCENE_ACTIVE())
-						{
-							WAIT(0);
-						}
-						ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToLSFromLCCoords[0] + 1500.00f, FlyToLSFromLCCoords[1] + 1500.00f, FlyToLSFromLCCoords[2] + 1500.00f, 0, 0, 1);
 						if (destination == 0)
-							loadSantos();
+							PlayFlightCutscene("lc_lca_take_nimb2", 8, false, true, false, false, true, true, true, true);
 						else if (destination == 2)
-							loadYankton();
-						CUTSCENE::REMOVE_CUTSCENE();
-						CAM::DO_SCREEN_FADE_OUT(0);
+							PlayFlightCutscene("lc_lca_take_nimb2", 8, false, true, false, true, true, true, true, true);
+						ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToLSFromLCCoords[0] + 1500.00f, FlyToLSFromLCCoords[1] + 1500.00f, FlyToLSFromLCCoords[2] + 1500.00f, 0, 0, 1);
 						unloadLiberty();
+						libertyCity.UnloadLevel();
 						WAIT(100);
+						if (destination == 0)
+						{
+							loadSantos();
+							losSantos.LoadLevel();
+						}
+						else if (destination == 2)
+						{
+							loadYankton();
+							northYankton.LoadLevel();
+						}
 						if (destination == 0)
 						{
 							ENTITY::SET_ENTITY_COORDS_NO_OFFSET(playerPed, LosSantosIntAirportArrival[0], LosSantosIntAirportArrival[1], LosSantosIntAirportArrival[2], 0, 0, 1);
@@ -1928,21 +2047,9 @@ namespace levelSwitch
 						}
 						else if (destination == 2)
 						{
-							ENTITY::FREEZE_ENTITY_POSITION(playerPed, false);
 							ENTITY::SET_ENTITY_COORDS_NO_OFFSET(playerPed, NorthYanktonAirportArrival[0], NorthYanktonAirportArrival[1], NorthYanktonAirportArrival[2], 0, 0, 1);
-							yanktonVehicleHash = GAMEPLAY::GET_HASH_KEY("asea2");
-							ENTITY::SET_ENTITY_HEADING(playerPed, 86.0f);
-							STREAMING::REQUEST_MODEL(yanktonVehicleHash);
-							while (!STREAMING::HAS_MODEL_LOADED(yanktonVehicleHash))
-							{
-								WAIT(0);
-							}
-							yanktonVehicle = VEHICLE::CREATE_VEHICLE(yanktonVehicleHash, NorthYanktonAirportArrival[0], NorthYanktonAirportArrival[1], NorthYanktonAirportArrival[2], 86.0f, true, true, false);
-							AI::TASK_WARP_PED_INTO_VEHICLE(playerPed, yanktonVehicle, -1);
-							STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(yanktonVehicleHash);
+							SpawnRentalCar("asea2", NorthYanktonAirportArrival[0], NorthYanktonAirportArrival[1], NorthYanktonAirportArrival[2], 86.0f, true);
 						}
-						CAM::SET_GAMEPLAY_CAM_RELATIVE_HEADING(0.0f);
-						CAM::SET_GAMEPLAY_CAM_RELATIVE_PITCH(0.0f, 0.0f);
 
 						if (!NETWORK::NETWORK_IS_IN_SESSION())
 						{
@@ -1961,24 +2068,9 @@ namespace levelSwitch
 						}
 						if (destination == 0)
 						{
-							CUTSCENE::REQUEST_CUTSCENE_WITH_PLAYBACK_LIST((char*)"hs4_lsa_land_nimb", 1, 24);
-							CUTSCENE::SET_CUTSCENE_PED_COMPONENT_VARIATION_FROM_PED("MP_1", playerPed, 0);
-							CUTSCENE::REGISTER_ENTITY_FOR_CUTSCENE(playerPed, "MP_1", 0, 0, 64);
-							CUTSCENE::SET_CUTSCENE_FADE_VALUES(true, true, true, true);
-							CUTSCENE::START_CUTSCENE(0);
-							while (CUTSCENE::IS_CUTSCENE_ACTIVE())
-							{
-								WAIT(0);
-							}
-							CUTSCENE::STOP_CUTSCENE_IMMEDIATELY();
-							CUTSCENE::REMOVE_CUTSCENE();
-						}
-						if (NETWORK::NETWORK_IS_IN_SESSION())
-						{
-							NETWORK::NETWORK_SET_IN_MP_CUTSCENE(false, false);
+							PlayFlightCutscene("hs4_lsa_land_nimb", 24, true, false, true, true, true, true, true, true);
 						}
 						ENTITY::FREEZE_ENTITY_POSITION(playerPed, false);
-						CAM::DO_SCREEN_FADE_OUT(0);
 						if (destination == 0)
 							ENTITY::SET_ENTITY_HEADING(playerPed, 341.24f);
 						else if (destination == 2)
@@ -2030,15 +2122,24 @@ namespace levelSwitch
 						ENTITY::SET_ENTITY_AS_MISSION_ENTITY(playerVehicle, true, true);
 						VEHICLE::DELETE_VEHICLE(&playerVehicle);
 					}
+					if (ENTITY::DOES_ENTITY_EXIST(rentalVehicle))
+					{
+						VEHICLE::DELETE_VEHICLE(&rentalVehicle);
+					}
+					//unloadYankton();
+					northYankton.UnloadLevel();
+					WAIT(100);
 					if (destination == 0)
 					{
 						ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToLCFromLSCoords[0] - 1500.00f, FlyToLCFromLSCoords[1] - 1500.00f, FlyToLCFromLSCoords[2] + 1500.00f, 0, 0, 1);
 						loadSantos();
+						losSantos.UnloadLevel();
 					}
 					else if (destination == 1)
 					{
 						ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToLSFromLCCoords[0] + 1500.00f, FlyToLSFromLCCoords[1] + 1500.00f, FlyToLSFromLCCoords[2] + 1500.00f, 0, 0, 1);
 						loadLiberty();
+						libertyCity.UnloadLevel();
 					}
 					if (destination == 0)
 					{
@@ -2069,49 +2170,11 @@ namespace levelSwitch
 							NETWORK::NETWORK_CLEAR_CLOCK_TIME_OVERRIDE();
 						}
 					}
-					unloadYankton();
-					if (NETWORK::NETWORK_IS_IN_SESSION())
-					{
-						NETWORK::NETWORK_SET_IN_MP_CUTSCENE(true, true);
-					}
 					if (destination == 0)
-					{
-						CUTSCENE::REQUEST_CUTSCENE_WITH_PLAYBACK_LIST((char*)"hs4_lsa_land_nimb", 1, 24);
-						CUTSCENE::SET_CUTSCENE_PED_COMPONENT_VARIATION_FROM_PED("MP_1", playerPed, 0);
-						CUTSCENE::REGISTER_ENTITY_FOR_CUTSCENE(playerPed, "MP_1", 0, 0, 64);
-						CUTSCENE::SET_CUTSCENE_FADE_VALUES(true, true, true, true);
-						CUTSCENE::START_CUTSCENE(0);
-						while (CUTSCENE::IS_CUTSCENE_ACTIVE())
-						{
-							WAIT(0);
-						}
-						CUTSCENE::STOP_CUTSCENE_IMMEDIATELY();
-						CUTSCENE::REMOVE_CUTSCENE();
-						if (NETWORK::NETWORK_IS_IN_SESSION())
-						{
-							NETWORK::NETWORK_SET_IN_MP_CUTSCENE(false, false);
-						}
-					}
-					if (destination == 1)
-					{
-						CUTSCENE::REQUEST_CUTSCENE_WITH_PLAYBACK_LIST((char*)"lc_lca_land_nimb", 1, 24);
-						CUTSCENE::SET_CUTSCENE_PED_COMPONENT_VARIATION_FROM_PED("MP_1", playerPed, 0);
-						CUTSCENE::REGISTER_ENTITY_FOR_CUTSCENE(playerPed, "MP_1", 0, 0, 64);
-						CUTSCENE::SET_CUTSCENE_FADE_VALUES(true, true, true, true);
-						CUTSCENE::START_CUTSCENE(0);
-						CAM::DO_SCREEN_FADE_IN(250);
-						while (CUTSCENE::IS_CUTSCENE_ACTIVE())
-						{
-							WAIT(0);
-						}
-						CUTSCENE::STOP_CUTSCENE_IMMEDIATELY();
-						CUTSCENE::REMOVE_CUTSCENE();
-					}
-					if (NETWORK::NETWORK_IS_IN_SESSION())
-					{
-						NETWORK::NETWORK_SET_IN_MP_CUTSCENE(false, false);
-					}
-					CAM::DO_SCREEN_FADE_OUT(0);
+						PlayFlightCutscene("hs4_lsa_land_nimb", 24, true, true, true, true, true, true, true, true);
+					else if (destination == 1)
+						PlayFlightCutscene("lc_lca_land_nimb", 24, true, true, true, true, true, true, true, true);
+					
 					ENTITY::FREEZE_ENTITY_POSITION(playerPed, false);
 					if (destination == 0)
 						ENTITY::SET_ENTITY_HEADING(playerPed, 341.24f);
@@ -2192,9 +2255,11 @@ namespace levelSwitch
 								{
 								case 0:
 									unloadSantos();
+									losSantos.UnloadLevel();
 									break;
 								case 1:
 									unloadLiberty();
+									libertyCity.UnloadLevel();
 									break;
 								}
 
@@ -2202,10 +2267,12 @@ namespace levelSwitch
 								{
 								case 1:
 									loadLiberty();
+									libertyCity.LoadLevel();
 									ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, LibertyCityDocksArrival[0], LibertyCityDocksArrival[1], LibertyCityDocksArrival[2], 0, 0, 1);
 									break;
 								case 0:
 									loadSantos();
+									losSantos.LoadLevel();
 									ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, LosSantosDocksArrival[0], LosSantosDocksArrival[1], LosSantosDocksArrival[2], 0, 0, 1);
 									break;
 								}
@@ -2266,67 +2333,113 @@ namespace levelSwitch
 		ENTITY::FREEZE_ENTITY_POSITION(player, true);
 		ENTITY::SET_ENTITY_COORDS_NO_OFFSET(player, FlyToLCFromLSCoords[0] + 1500, FlyToLCFromLSCoords[1] + 1500, FlyToLCFromLSCoords[2] + 1500, 0, 0, 1);
 
-		// Unload the current map
-		switch (currentLocation)
+		if (currentLocation != destination)
 		{
-		case 1:
-			unloadLiberty();
-			break;
-		case 2:
-			unloadYankton();
-			break;
-		case 3:
-			unloadCayo();
-			break;
-		default:
-			unloadSantos();
-			break;
+			// Unload the current map
+			switch (currentLocation)
+			{
+			case 1: // Liberty City
+				unloadLiberty();
+				libertyCity.UnloadLevel();
+				if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(-3, 0, 0);
+				break;
+			case 2: // North Yankton
+				//unloadYankton();
+				northYankton.UnloadLevel();
+				if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(-2, 0, 0);
+				break;
+			case 3: // Cayo Perico
+				//unloadCayo();
+				cayoPerico.UnloadLevel();
+				if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(-5, 0, 0);
+				break;
+			case 4: // Santa Fuegos
+				santaFuegos.UnloadLevel();
+				if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(-5, 0, 0);
+				break;
+			default: // Los Santos
+				unloadSantos();
+				losSantos.UnloadLevel();
+				break;
+			}
+
+			// Load the new map
+			switch (destination)
+			{
+			case 1: // Liberty City
+				loadLiberty();
+				libertyCity.LoadLevel();
+				if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(3, 0, 0);
+				else NetworkClockController(true);
+				break;
+
+			case 2: // North Yankton
+				loadYankton();
+				northYankton.LoadLevel();
+				if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(2, 0, 0);
+				break;
+
+			case 3: // Cayo Perico
+				loadCayo();
+				cayoPerico.LoadLevel();
+				if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(5, 0, 0);
+				break;
+
+			case 4: // Santa Fuegos
+				santaFuegos.LoadLevel();
+				if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(5, 0, 0);
+				break;
+
+			case 0: // Los Santos
+				loadSantos();
+				losSantos.LoadLevel();
+				if (NETWORK::NETWORK_IS_IN_SESSION())
+				{
+					NetworkClockController(false);
+					NETWORK::NETWORK_CLEAR_CLOCK_TIME_OVERRIDE();
+				}
+				break;
+			}
 		}
 
-		// Load the new map and teleport player
+		// Teleport the player
 		switch (destination)
 		{
 		case 1: // Liberty City
-			loadLiberty();
-			TeleportPlayer(player, 4976.62f, -2914.04f, 16.48f, 0.0f);
-			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(3, 0, 0);
-			else NetworkClockController(true);
+			TeleportPlayer(player, Settings::LC_X, Settings::LC_Y, Settings::LC_Z, 0.0f);
 			break;
+
 		case 2: // North Yankton
-			loadYankton();
-			TeleportPlayer(player, 3359.87f, -4849.52f, 111.67f, 0.0f);
-			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(-1, 0, 0);
+			TeleportPlayer(player, Settings::NY_X, Settings::NY_Y, Settings::NY_Z, 0.0f);
 			break;
+
 		case 3: // Cayo Perico
-			loadCayo();
-			TeleportPlayer(player, 4906.26f, -4912.76f, 3.36f, 0.0f);
-			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(2, 0, 0);
+			TeleportPlayer(player, Settings::CP_X, Settings::CP_Y, Settings::CP_Z, 0.0f);
 			break;
+
+		case 4: // Santa Fuegos
+			TeleportPlayer(player, Settings::SF_X, Settings::SF_Y, Settings::SF_Z, 0.0f);
+			break;
+
 		case 0: // Los Santos
-			loadSantos();
-			TeleportPlayer(player, -272.17f, -616.54f, 35.16f, 0.0f);
-			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(-5, 0, 0);
-			else
-			{
-				NetworkClockController(false);
-				NETWORK::NETWORK_CLEAR_CLOCK_TIME_OVERRIDE();
-			}
+			TeleportPlayer(player, Settings::LS_X, Settings::LS_Y, Settings::LS_Z, 0.0f);
 			break;
 		}
-
 
 		ENTITY::FREEZE_ENTITY_POSITION(player, false);
 		worldtravel::SetPlayerLocationID(destination);
 		CAM::DO_SCREEN_FADE_IN(800);
 	}
 
+	int activeLineIndexTeleport = 0;
+
 	void TeleportBetweenMaps()
 	{
 
 		if (IsKeyJustUp(tpKey))
 		{
-			Settings::Load();
-			if (Settings::FastTravel)
+			//Settings::Load();
+			if (fastTravel)
 			{
 				Entity player = playerPed;
 				int currentLocation = worldtravel::GetPlayerLocationID();
@@ -2336,20 +2449,115 @@ namespace levelSwitch
 				}
 				int destination = -1;
 
+				/*const float lineWidth = 250.0;
+				const int lineCount = 4;
+
+				worldtravel::Menu::MenuBeep("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+
+				std::string caption = "FAST TRAVEL";
+
+				static LPCSTR lineCaption[lineCount] = {
+					"Los Santos",
+					"North Yankton",
+					"Cayo Perico",
+					"Liberty City"
+				};
+
+				DWORD waitTime = 150;
+				
+				while (true)
+				{
+					worldtravel::Menu::DisableControls(true);
+					// timed menu draw, used for pause after active line switch
+					DWORD maxTickCount = GetTickCount64() + waitTime;
+					do
+					{
+						// draw menu
+						worldtravel::Menu::DrawMenuLine(caption, lineWidth, 15.0, 18.0, 0.0, 5.0, false, true);
+						for (int i = 0; i < lineCount; i++)
+							if (i != activeLineIndexTeleport)
+								worldtravel::Menu::DrawMenuLine(lineCaption[i], lineWidth, 9.0, 60.0 + i * 36.0, 0.0, 9.0, false, false);
+						worldtravel::Menu::DrawMenuLine(lineCaption[activeLineIndexTeleport], lineWidth + 1.0, 11.0, 56.0 + activeLineIndexTeleport * 36.0, 0.0, 7.0, true, false);
+
+
+						WAIT(0);
+					} while (GetTickCount64() < maxTickCount);
+					waitTime = 0;
+
+					// process buttons
+					bool bSelect, bBack, bUp, bDown;
+					worldtravel::Menu::GetButtonState(&bSelect, &bBack, &bUp, &bDown, NULL, NULL);
+
+					if (bSelect)
+					{
+						worldtravel::Menu::MenuBeep("SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+						switch (activeLineIndexTeleport)
+						{
+						case 0:
+							destination = 0; // Los Santos
+							PerformTeleport(player, currentLocation, destination);
+							break;
+						case 1:
+							destination = 2; // North Yankton
+							PerformTeleport(player, currentLocation, destination);
+							break;
+						case 2:
+							destination = 3; // Cayo Perico
+							PerformTeleport(player, currentLocation, destination);
+							break;
+						case 3:
+							destination = 1; // Liberty City
+							PerformTeleport(player, currentLocation, destination);
+							break;
+						}
+						waitTime = 200;
+					}
+					else
+					{
+						if (bBack || IsKeyJustUp(tpKey))
+						{
+							worldtravel::Menu::MenuBeep("BACK", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+							break;
+						}
+						else
+						{
+							if (bUp)
+							{
+								worldtravel::Menu::MenuBeep("NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+								if (activeLineIndexTeleport == 0)
+									activeLineIndexTeleport = lineCount;
+								activeLineIndexTeleport--;
+								waitTime = 150;
+							}
+							else
+							{
+								if (bDown)
+								{
+									worldtravel::Menu::MenuBeep("NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET");
+									activeLineIndexTeleport++;
+									if (activeLineIndexTeleport == lineCount)
+										activeLineIndexTeleport = 0;
+									waitTime = 150;
+								}
+							}
+						}
+					}
+				}*/
 				// Determine destination based on current location
-				switch (currentLocation)
+				/*switch (currentLocation)
 				{
 				case 0:
-					destination = 1; // Liberty City
+					if (loadLibertyCity) // Liberty City (if enabled)
+						destination = 1; // Liberty City
 					break;
 				case 1:
-					if (Settings::EnableNorthYankton) // North Yankton (if enabled), or Cayo Perico (if enabled and not in session), or back to Los Santos
+					if (loadNorthYankton) // North Yankton (if enabled), or Cayo Perico (if enabled and not in session), or back to Los Santos
 					{
 						destination = 2;
-						break;
 					}
+					break;
 				case 2:
-					destination = (Settings::EnableCayoPerico && !NETWORK::NETWORK_IS_IN_SESSION()) ? 3 : 0; // Cayo Perico (if enabled and not in session) or back to Los Santos
+					destination = (loadCayoPerico && !NETWORK::NETWORK_IS_IN_SESSION()) ? 3 : 0; // Cayo Perico (if enabled and not in session) or back to Los Santos
 					break;
 				case 3:
 					destination = 0; // Los Santos
@@ -2362,6 +2570,31 @@ namespace levelSwitch
 				// Teleport to the determined destination
 				if (destination != -1)
 				{
+					PerformTeleport(player, currentLocation, destination);
+				}*/
+
+				int selectedLine = worldtravel::Menu::DrawMenu("Fast Travel", teleportOptions, teleportOptionsAvalible, "HUD_FRONTEND_DEFAULT_SOUNDSET");
+
+				switch (selectedLine)
+				{
+				case 0:
+					destination = 0; // Los Santos
+					PerformTeleport(player, currentLocation, destination);
+					break;
+				case 1:
+					destination = 2; // North Yankton
+					PerformTeleport(player, currentLocation, destination);
+					break;
+				case 2:
+					destination = 3; // Cayo Perico
+					PerformTeleport(player, currentLocation, destination);
+					break;
+				case 3:
+					destination = 1; // Liberty City
+					PerformTeleport(player, currentLocation, destination);
+					break;
+				case 4:
+					destination = 4; // Santa Fuegos
 					PerformTeleport(player, currentLocation, destination);
 				}
 			}
@@ -2379,15 +2612,26 @@ namespace levelSwitch
 		{
 		case 1:
 			unloadLiberty();
+			libertyCity.UnloadLevel();
+			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(-3, 0, 0);
 			break;
 		case 2:
-			unloadYankton();
+			//unloadYankton();
+			northYankton.UnloadLevel();
+			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(-2, 0, 0);
 			break;
 		case 3:
-			unloadCayo();
+			//unloadCayo();
+			cayoPerico.UnloadLevel();
+			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(-5, 0, 0);
+			break;
+		case 4:
+			santaFuegos.UnloadLevel();
+			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(-5, 0, 0);
 			break;
 		default:
 			unloadSantos();
+			losSantos.UnloadLevel();
 			break;
 		}
 
@@ -2396,21 +2640,29 @@ namespace levelSwitch
 		{
 		case 1: // Liberty City
 			loadLiberty();
+			libertyCity.LoadLevel();
 			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(3, 0, 0);
 			else NetworkClockController(true);
 			break;
 		case 2: // North Yankton
 			loadYankton();
-			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(-1, 0, 0);
+			northYankton.LoadLevel();
+			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(2, 0, 0);
 			break;
 		case 3: // Cayo Perico
 			loadCayo();
-			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(2, 0, 0);
+			cayoPerico.LoadLevel();
+			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(5, 0, 0);
+			break;
+		case 4: // Santa Fuegos
+			loadFuegos();
+			santaFuegos.LoadLevel();
+			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(5, 0, 0);
 			break;
 		case 0: // Los Santos
 			loadSantos();
-			if (!NETWORK::NETWORK_IS_IN_SESSION()) TIME::ADD_TO_CLOCK_TIME(-5, 0, 0);
-			else
+			losSantos.LoadLevel();
+			if (NETWORK::NETWORK_IS_IN_SESSION())
 			{
 				NetworkClockController(false);
 				NETWORK::NETWORK_CLEAR_CLOCK_TIME_OVERRIDE();
@@ -2462,17 +2714,12 @@ namespace levelSwitch
 
 	void RunTick()
 	{
-		CayoPericoIslandHopperHelper();
-		worldtravel::MpMap::CheckIfMPMapIsActive();
-		InteriorWaterFix();
 		AirportTravel();
 		DocksTravel();
 		TeleportBetweenMaps();
 		FlightController();
 		CharacterSwitchLoadLS();
 		BlipVisibilityController();
-		NpcSpawnBlocker();
-		KeepLosSantosIplsDisabled();
 		CreateBlips();
 		static bool hasRunOnStartup = false; // Static variable to ensure this runs only once
 		if (Settings::EnableLCOnStartup && !hasRunOnStartup)
@@ -2492,8 +2739,14 @@ namespace levelSwitch
 	void LevelSwitchMain()
 	{
 		Settings::Load();
+		loadLibertyCity = Settings::EnableLibertyCity;
 		loadLibertyLODLights = Settings::EnableLibertyCityLODLights;
+		loadNorthYankton = Settings::EnableNorthYankton;
+		loadCayoPerico = Settings::EnableCayoPerico;
+		loadSantaFuegos = Settings::EnableSantaFuegos;
+		fastTravel = Settings::FastTravel;
 		restrictedAreaClearance = Settings::GrantAccessToRestrictedAreas;
+		worldtravel::RestrictedAreaClearance::SetRestrictedAreaClearance(restrictedAreaClearance);
 		tpKey = Settings::TeleportKey;
 		initialize();
 		while (true)

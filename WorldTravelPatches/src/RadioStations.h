@@ -1,7 +1,6 @@
 #pragma once
 #include <cstdint>
 #include <string>
-#include "Hooking.Patterns.h"
 #include <MinHook.h>
 #include "Hooking.h"
 

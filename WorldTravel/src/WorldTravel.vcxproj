@@ -97,13 +97,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AmbientZone.cpp" />
+    <ClCompile Include="AmbientZoneGroup.cpp" />
     <ClCompile Include="Blips.cpp" />
-    <ClCompile Include="IPL.cpp" />
+    <ClCompile Include="FileReader.cpp" />
+    <ClCompile Include="GameVersion.cpp" />
+    <ClCompile Include="Helpers.cpp" />
+    <ClCompile Include="Ipl.cpp" />
+    <ClCompile Include="IplGroup.cpp" />
+    <ClCompile Include="Level.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="PathNodeState.cpp" />
     <ClCompile Include="PayNSpray.cpp" />
+    <ClCompile Include="RadioStation.cpp" />
+    <ClCompile Include="RadioStationGroup.cpp" />
     <ClCompile Include="Respawn.cpp" />
     <ClCompile Include="RespawnBlockToggle.cpp" />
+    <ClCompile Include="RestrictedAreaClearance.cpp" />
     <ClCompile Include="Scenario.cpp" />
+    <ClCompile Include="ScenarioGroup.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Shops.cpp" />
     <ClCompile Include="dllmain.cpp" />
@@ -120,16 +132,33 @@
     <ClCompile Include="RestrictedAreas.cpp" />
     <ClCompile Include="RespawnBlock.cpp" />
     <ClCompile Include="LevelSwitch.cpp" />
+    <ClCompile Include="WaterState.cpp" />
+    <ClCompile Include="WeatherTypes.cpp" />
+    <ClCompile Include="Zone.cpp" />
+    <ClCompile Include="ZonedModel.cpp" />
+    <ClCompile Include="ZonedModelGroup.cpp" />
+    <ClCompile Include="ZoneGroup.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AmbientZone.h" />
+    <ClInclude Include="AmbientZoneGroup.h" />
     <ClInclude Include="Blips.h" />
-    <ClInclude Include="IPL.h" />
+    <ClInclude Include="FileReader.h" />
+    <ClInclude Include="GameVersion.h" />
+    <ClInclude Include="Helpers.h" />
+    <ClInclude Include="Ipl.h" />
+    <ClInclude Include="IplGroup.h" />
+    <ClInclude Include="Level.h" />
     <ClInclude Include="PathNodeState.h" />
     <ClInclude Include="PayNSpray.h" />
+    <ClInclude Include="RadioStation.h" />
+    <ClInclude Include="RadioStationGroup.h" />
     <ClInclude Include="Respawn.h" />
     <ClInclude Include="RespawnBlock.h" />
     <ClInclude Include="RespawnBlockToggle.h" />
+    <ClInclude Include="RestrictedAreaClearance.h" />
     <ClInclude Include="Scenario.h" />
+    <ClInclude Include="ScenarioGroup.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Shops.h" />
     <ClInclude Include="Entrances.h" />
@@ -145,6 +174,14 @@
     <ClInclude Include="Minimap.h" />
     <ClInclude Include="RestrictedAreas.h" />
     <ClInclude Include="LevelSwitch.h" />
+    <ClInclude Include="ToggleFogVolume.h" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="WaterState.h" />
+    <ClInclude Include="WeatherTypes.h" />
+    <ClInclude Include="Zone.h" />
+    <ClInclude Include="ZonedModel.h" />
+    <ClInclude Include="ZonedModelGroup.h" />
+    <ClInclude Include="ZoneGroup.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

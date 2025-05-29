@@ -54,16 +54,70 @@
     <ClCompile Include="Hooking.Patterns.cpp">
       <Filter>hooking</Filter>
     </ClCompile>
-    <ClCompile Include="IPL.cpp">
-      <Filter>helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="Scenario.cpp">
-      <Filter>helpers</Filter>
-    </ClCompile>
     <ClCompile Include="keyboard.cpp">
       <Filter>helpers</Filter>
     </ClCompile>
     <ClCompile Include="PayNSpray.cpp">
+      <Filter>helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="FileReader.cpp">
+      <Filter>helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameVersion.cpp">
+      <Filter>helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers.cpp">
+      <Filter>scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="ScenarioGroup.cpp">
+      <Filter>classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenario.cpp">
+      <Filter>classes</Filter>
+    </ClCompile>
+    <ClCompile Include="IplGroup.cpp">
+      <Filter>classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Ipl.cpp">
+      <Filter>classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Zone.cpp">
+      <Filter>classes</Filter>
+    </ClCompile>
+    <ClCompile Include="ZoneGroup.cpp">
+      <Filter>classes</Filter>
+    </ClCompile>
+    <ClCompile Include="ZonedModel.cpp">
+      <Filter>classes</Filter>
+    </ClCompile>
+    <ClCompile Include="ZonedModelGroup.cpp">
+      <Filter>classes</Filter>
+    </ClCompile>
+    <ClCompile Include="AmbientZone.cpp">
+      <Filter>classes</Filter>
+    </ClCompile>
+    <ClCompile Include="AmbientZoneGroup.cpp">
+      <Filter>classes</Filter>
+    </ClCompile>
+    <ClCompile Include="RadioStation.cpp">
+      <Filter>classes</Filter>
+    </ClCompile>
+    <ClCompile Include="RadioStationGroup.cpp">
+      <Filter>classes</Filter>
+    </ClCompile>
+    <ClCompile Include="WeatherTypes.cpp">
+      <Filter>classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Level.cpp">
+      <Filter>classes</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterState.cpp">
+      <Filter>helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="RestrictedAreaClearance.cpp">
       <Filter>helpers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -120,12 +174,6 @@
     <ClInclude Include="Hooking.Patterns.h">
       <Filter>hooking</Filter>
     </ClInclude>
-    <ClInclude Include="IPL.h">
-      <Filter>helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Scenario.h">
-      <Filter>helpers</Filter>
-    </ClInclude>
     <ClInclude Include="Hashing.h">
       <Filter>helpers</Filter>
     </ClInclude>
@@ -133,6 +181,69 @@
       <Filter>helpers</Filter>
     </ClInclude>
     <ClInclude Include="PayNSpray.h">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="ToggleFogVolume.h">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="FileReader.h">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameVersion.h">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers.h">
+      <Filter>scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="ScenarioGroup.h">
+      <Filter>classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenario.h">
+      <Filter>classes</Filter>
+    </ClInclude>
+    <ClInclude Include="IplGroup.h">
+      <Filter>classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Ipl.h">
+      <Filter>classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Zone.h">
+      <Filter>classes</Filter>
+    </ClInclude>
+    <ClInclude Include="ZoneGroup.h">
+      <Filter>classes</Filter>
+    </ClInclude>
+    <ClInclude Include="ZonedModel.h">
+      <Filter>classes</Filter>
+    </ClInclude>
+    <ClInclude Include="ZonedModelGroup.h">
+      <Filter>classes</Filter>
+    </ClInclude>
+    <ClInclude Include="AmbientZone.h">
+      <Filter>classes</Filter>
+    </ClInclude>
+    <ClInclude Include="AmbientZoneGroup.h">
+      <Filter>classes</Filter>
+    </ClInclude>
+    <ClInclude Include="RadioStation.h">
+      <Filter>classes</Filter>
+    </ClInclude>
+    <ClInclude Include="RadioStationGroup.h">
+      <Filter>classes</Filter>
+    </ClInclude>
+    <ClInclude Include="WeatherTypes.h">
+      <Filter>classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.h">
+      <Filter>classes</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterState.h">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="RestrictedAreaClearance.h">
       <Filter>helpers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -148,6 +259,9 @@
     </Filter>
     <Filter Include="helpers">
       <UniqueIdentifier>{f1a6e786-9386-4c18-bed1-5e44a8c2cc2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="classes">
+      <UniqueIdentifier>{f465108b-aca9-4f1a-86e0-9765ccd6ba35}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

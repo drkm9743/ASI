@@ -37,4 +37,9 @@ namespace worldtravel
 	{
 		return playerLocationID == 3;
 	}
+
+	bool IsSantaFuegos()
+	{
+		return playerLocationID == 4;
+	}
 }

@@ -6,140 +6,139 @@
 #include "CDataFileMgr.h"
 #include <spdlog/spdlog.h>
 #include <filesystem>
+#include <Windows.h>
 
-namespace patches {
-namespace paths {
+// Unused Currently
 
-static CDataFileMgr::DataFile* GetRpfFile(const char* filename)
+CDataFileMgr::DataFile* Paths::GetRpfFile(const char* filename)
 {
-	CDataFileMgr* mgr = CDataFileMgr::Instance();
+    CDataFileMgr* mgr = CDataFileMgr::Instance();
 
-	for (int i = 0; i < mgr->m_DataFiles.Count; i++)
-	{
-		CDataFileMgr::DataFile* file = &mgr->m_DataFiles.Items[i];
+    for (int i = 0; i < mgr->m_DataFiles.Count; i++)
+    {
+        CDataFileMgr::DataFile* file = &mgr->m_DataFiles.Items[i];
 
-		int cmp = strncmp(file->filename, filename, sizeof(file->filename));
-		if (file->fileType == CDataFileMgr::RPF_FILE &&
-			cmp == 0)
-		{
-			return file;
-		}
-	}
+        int cmp = strncmp(file->filename, filename, sizeof(file->filename));
+        if (file->fileType == CDataFileMgr::RPF_FILE && cmp == 0)
+        {
+            return file;
+        }
+    }
 
-	return nullptr;
+    return nullptr;
 }
 
-static bool wantsToSwitchPaths = false;
-static bool vanillaPaths = true;
-
-static void CheckForSwitch()
+void Paths::CheckForSwitch()
 {
-	if (wantsToSwitchPaths)
-	{
-		constexpr const char* vanillaFilename = "platform:/levels/gta5/paths.rpf";
-		constexpr const char* customFilename = "platform:/levels/gta5/mypaths.rpf";
+    if (!wantsToSwitchPaths)
+        return;
 
-		CDataFileMgr::DataFile* vanillaFile = GetRpfFile(vanillaFilename);
-		CDataFileMgr::DataFile* customFile = GetRpfFile(customFilename);
+    constexpr const char* vanillaFilename = "platform:/levels/gta5/paths.rpf";
+    constexpr const char* customFilename = "platform:/levels/gta5/mypaths.rpf";
 
-		spdlog::info("VanillaFile: {}", (void*)vanillaFile);
-		spdlog::info("CustomFile: {}", (void*)customFile);
+    CDataFileMgr::DataFile* vanillaFile = GetRpfFile(vanillaFilename);
+    CDataFileMgr::DataFile* customFile = GetRpfFile(customFilename);
 
-		if (vanillaFile && customFile)
-		{
-			CPathFind* pf = CPathFind::Instance();
-			
-			static void(*strStreaming_ClearRequiredFlag)(void*, uint32_t index, uint32_t flags) =
-				(decltype(strStreaming_ClearRequiredFlag))hook::get_pattern("89 54 24 10 48 83 EC 28 4C 8B C9 8B CA 4D 8B 11"); // rage::strStreamingInfoManager::ClearRequiredFlag
-			static bool(*strStreaming_RemoveObject)(void*, uint32_t index) =
-				(decltype(strStreaming_RemoveObject))hook::get_pattern("4C 8B 31 8B F2 4C 8B F9 41 F6 44 F6 ? ? 75 07", -0x23); // rage::strStreamingInfoManager::RemoveObject
-			static void* strStreaming = []()
-			{
-				auto addr = hook::get_pattern<uint8_t>("48 8B 05 ? ? ? ? 41 B1 01 48 8D 1C C8", 3); // rage::strStreamingLoader::Flush
-				return addr + *(int*)addr + 4;
-			}();
+    spdlog::info("VanillaFile: {}", (void*)vanillaFile);
+    spdlog::info("CustomFile: {}", (void*)customFile);
 
+    if (vanillaFile && customFile)
+    {
+        CPathFind* pf = CPathFind::Instance();
 
-			for (int i = 0; i < 1024; i++)
-			{
-				strStreaming_ClearRequiredFlag(strStreaming, pf->GetBaseIndex() + i, 0x11);
-				strStreaming_RemoveObject(strStreaming, pf->GetBaseIndex() + i);
-				pf->Remove(i);
-			}
+        static void(*strStreaming_ClearRequiredFlag)(void*, uint32_t, uint32_t) =
+            (decltype(strStreaming_ClearRequiredFlag))hook::get_pattern("89 54 24 10 48 83 EC 28 4C 8B C9 8B CA 4D 8B 11");
 
-			if (vanillaPaths)
-			{
-				CFileLoader::DisableRpfFile(vanillaFile);
-				CFileLoader::EnableRpfFile(customFile);
-			}
-			else
-			{
-				CFileLoader::DisableRpfFile(customFile);
-				CFileLoader::EnableRpfFile(vanillaFile);
-			}
+        static bool(*strStreaming_RemoveObject)(void*, uint32_t) =
+            (decltype(strStreaming_RemoveObject))hook::get_pattern("4C 8B 31 8B F2 4C 8B F9 41 F6 44 F6 ? ? 75 07", -0x23);
 
-			spdlog::info("SWITCHED PATHS");
-			spdlog::info("VanillaFile: disabled:{}", vanillaFile->disabled);
-			spdlog::info("CustomFile: disabled:{}", customFile->disabled);
+        static void* strStreaming = []()
+            {
+                auto addr = hook::get_pattern<uint8_t>("48 8B 05 ? ? ? ? 41 B1 01 48 8D 1C C8", 3);
+                return addr + *(int*)addr + 4;
+            }();
 
+        for (int i = 0; i < 1024; i++)
+        {
+            strStreaming_ClearRequiredFlag(strStreaming, pf->GetBaseIndex() + i, 0x11);
+            strStreaming_RemoveObject(strStreaming, pf->GetBaseIndex() + i);
+            pf->Remove(i);
+        }
 
-			vanillaPaths = !vanillaPaths;
+        if (vanillaPaths)
+        {
+            CFileLoader::DisableRpfFile(vanillaFile);
+            CFileLoader::EnableRpfFile(customFile);
+        }
+        else
+        {
+            CFileLoader::DisableRpfFile(customFile);
+            CFileLoader::EnableRpfFile(vanillaFile);
+        }
 
-			spdlog::info("VanillaPaths:{}", vanillaPaths);
-		}
+        spdlog::info("SWITCHED PATHS");
+        spdlog::info("VanillaFile: disabled:{}", vanillaFile->disabled);
+        spdlog::info("CustomFile: disabled:{}", customFile->disabled);
 
-		wantsToSwitchPaths = false;
-	}
+        vanillaPaths = !vanillaPaths;
+        spdlog::info("VanillaPaths:{}", vanillaPaths);
+    }
+
+    wantsToSwitchPaths = false;
 }
 
-template<int FramesToSkip = 1>
-static void LogStackTrace()
+template<int FramesToSkip>
+void Paths::LogStackTrace()
 {
-	void* stack[32];
-	USHORT frames = CaptureStackBackTrace(FramesToSkip, 32, stack, NULL);
+    void* stack[32];
+    USHORT frames = CaptureStackBackTrace(FramesToSkip, 32, stack, NULL);
 
-	spdlog::warn("\tStack Trace:");
-	for (int i = 0; i < frames; i++)
-	{
-		void* address = stack[i];
-		HMODULE module = NULL;
-		GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCSTR)address, &module);
-		char moduleName[256];
-		GetModuleFileName(module, moduleName, 256);
-
-		//spdlog::warn("\t\t{:16X} - {}+{:08X}", (uintptr_t)address, std::filesystem::path(moduleName).filename().string().c_str(), ((uintptr_t)address - (uintptr_t)module));
-	}
+    spdlog::warn("\tStack Trace:");
+    for (int i = 0; i < frames; i++)
+    {
+        void* address = stack[i];
+        HMODULE module = NULL;
+        GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+            (LPCSTR)address, &module);
+        char moduleName[256];
+        GetModuleFileName(module, moduleName, 256);
+        // spdlog::warn("\t\t{:16X} - {}+{:08X}", (uintptr_t)address, std::filesystem::path(moduleName).filename().string().c_str(), ((uintptr_t)address - (uintptr_t)module));
+    }
 }
 
-static uint32_t*(*CPathFind_Register_orig)(CPathFind* pf, uint32_t* outIndex, const char* name);
-static uint32_t* CPathFind_Register_detour(CPathFind* pf, uint32_t* outIndex, const char* name)
+uint32_t* Paths::CPathFind_Register_detour(CPathFind* pf, uint32_t* outIndex, const char* name)
 {
-	CPathFind_Register_orig(pf, outIndex, name);
-
-	spdlog::info("CPathFind::Register: index:{}, name:{}", *outIndex, name);
-	LogStackTrace<2>();
-	return outIndex;
+    CPathFind_Register_orig(pf, outIndex, name);
+    spdlog::info("CPathFind::Register: index:{}, name:{}", *outIndex, name);
+    LogStackTrace<2>();
+    return outIndex;
 }
 
-static bool(*CPathFind_PlaceResource_orig)(CPathFind* pf, uint32_t index, void* resourceMap, void* resourceInfo);
-static bool CPathFind_PlaceResource_detour(CPathFind* pf, uint32_t index, void* resourceMap, void* resourceInfo)
+bool Paths::CPathFind_PlaceResource_detour(CPathFind* pf, uint32_t index, void* resourceMap, void* resourceInfo)
 {
-	spdlog::info("CPathFind::PlaceResource: index:{}", index);
-	LogStackTrace<2>();
-	return CPathFind_PlaceResource_orig(pf, index, resourceMap, resourceInfo);
+    spdlog::info("CPathFind::PlaceResource: index:{}", index);
+    LogStackTrace<2>();
+    return CPathFind_PlaceResource_orig(pf, index, resourceMap, resourceInfo);
 }
 
-void Init()
+void Paths::Init()
 {
-	events::OnCorePreUpdate.Add(CheckForSwitch);
+    Events::OnCorePreUpdate.Add(CheckForSwitch);
 
-	MH_CreateHook(hook::get_pattern("40 53 48 83 EC 20 48 8B DA 49 8D 48 05 4C 8D 44 24 ?"), CPathFind_Register_detour, (void**)&CPathFind_Register_orig); // CPathFind::Register
-	MH_CreateHook(hook::get_pattern("85 D2 78 59 48 89 5C 24 ? 89 54 24 10"), CPathFind_PlaceResource_detour, (void**)&CPathFind_PlaceResource_orig); // CPathFind::PlaceResource
+    MH_CreateHook(
+        hook::get_pattern("40 53 48 83 EC 20 48 8B DA 49 8D 48 05 4C 8D 44 24 ?"),
+        CPathFind_Register_detour,
+        reinterpret_cast<void**>(&CPathFind_Register_orig)
+    );
+
+    MH_CreateHook(
+        hook::get_pattern("85 D2 78 59 48 89 5C 24 ? 89 54 24 10"),
+        CPathFind_PlaceResource_detour,
+        reinterpret_cast<void**>(&CPathFind_PlaceResource_orig)
+    );
 }
 
-void SwitchPaths()
+void Paths::SwitchPaths()
 {
-	wantsToSwitchPaths = true;
+    wantsToSwitchPaths = true;
 }
-
-} }

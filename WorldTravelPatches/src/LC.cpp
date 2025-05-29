@@ -6,22 +6,22 @@
 
 export void Water_Load(const char* filePath)
 {
-	patches::water::Load(filePath);
+	Water::Load(filePath);
 }
 
 export void Water_BeginLoadScreen()
 {
-	patches::water::BeginLoadScreen();
+	Water::BeginLoadScreen();
 }
 
 export void Water_EndLoadScreen()
 {
-	patches::water::EndLoadScreen();
+	Water::EndLoadScreen();
 }
 
 export void Paths_Switch()
 {
-	patches::paths::SwitchPaths();
+	Paths::SwitchPaths();
 }
 
 // backwards compatibility

@@ -1,58 +1,72 @@
-#include "IPL.h"
+#include "Ipl.h"
 
-namespace objects
+using namespace std;
+
+
+
+std::string Ipl::GetIplName()
 {
-	namespace map
+	return iplName;
+}
+
+void Ipl::SetIplName(const std::string& ipl)
+{
+	iplName = ipl;
+	iplState = STREAMING::IS_IPL_ACTIVE((char*)iplName.c_str());
+}
+
+
+
+bool Ipl::GetIplState()
+{
+	return iplState;
+}
+
+void Ipl::SetIplState()
+{
+	iplState = STREAMING::IS_IPL_ACTIVE((char*)iplName.c_str());
+}
+
+void Ipl::SetIplState(bool state)
+{
+	iplState = state;
+}
+
+
+
+void Ipl::RequestIpl(bool checkState)
+{
+	if (checkState)
 	{
-		class IPL
+		if (!iplState)
 		{
-			std::string iplName;
-			bool iplState;
+			return;
+		}
+	}
+	STREAMING::REQUEST_IPL((char*)iplName.c_str());
+}
 
-			IPL(std::string ipl)
-			{
-				iplName = ipl;
-				iplState = true;
-			}
+void Ipl::RequestIplIfNotActive()
+{
+	if (!STREAMING::IS_IPL_ACTIVE((char*)iplName.c_str()))
+	{
+		STREAMING::REQUEST_IPL((char*)iplName.c_str());
+	}
+}
 
-			std::string GetIPLName()
-			{
-				return iplName;
-			}
 
-			void RequestIPL(bool checkState)
-			{
-				if (checkState)
-				{
-					if (!iplState)
-					{
-						return;
-					}
-				}
-				STREAMING::REQUEST_IPL((char*)iplName.c_str());
-			}
 
-			void RemoveIPL(bool saveState)
-			{
-				if (saveState)
-					SetIPLState();
-				STREAMING::REMOVE_IPL((char*)iplName.c_str());
-			}
+void Ipl::RemoveIpl(bool saveState)
+{
+	if (saveState)
+		SetIplState();
+	STREAMING::REMOVE_IPL((char*)iplName.c_str());
+}
 
-			void SetIPLState()
-			{
-				iplState = STREAMING::IS_IPL_ACTIVE((char*)iplName.c_str());
-			}
-
-			void SetIPLState(bool state)
-			{
-				iplState = state;
-			}
-
-			bool GetIPLState()
-			{
-				return iplState;
-			}
-		};
+void Ipl::RemoveIplIfActive()
+{
+	if (STREAMING::IS_IPL_ACTIVE((char*)iplName.c_str()))
+	{
+		STREAMING::REMOVE_IPL((char*)iplName.c_str());
 	}
 }

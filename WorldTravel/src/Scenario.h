@@ -1,19 +1,26 @@
-#pragma once
-
 #include <string>
 #include "..\dependencies\include\natives.h"
 
+using namespace std;
+#ifndef SCENARIO
+#define SCENARIO
 class Scenario
 {
 public:
 	std::string scenarioName;
 	bool scenarioState;
 
-	Scenario(std::string scenario);
+	std::string GetScenarioName();
+	void SetScenarioName(const std::string& scenario);
 
-	void RequestScenario(bool checkState);
-	void RemoveScenario(bool saveState);
+	bool GetScenarioState();
 	void SetScenarioState();
 	void SetScenarioState(bool state);
-	bool GetScenarioState();
+	
+	void RequestScenario(bool checkState);
+	void RequestScenarioIfNotActive();
+	
+	void RemoveScenario(bool saveState);
+	void RemoveScenarioIfActive();
 };
+#endif

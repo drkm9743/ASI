@@ -1,21 +1,26 @@
-#pragma once
-
-
 #include <string>
 #include "..\dependencies\include\natives.h"
 
-
-class IPL
+using namespace std;
+#ifndef IPL
+#define IPL
+class Ipl
 {
 public: 
 	std::string iplName;
 	bool iplState;
 
-	IPL(std::string ipl);
+	std::string GetIplName();
+	void SetIplName(const std::string& ipl);
 
-	void RequestIPL(bool checkState);
-	void RemoveIPL(bool saveState);
-	void SetIPLState();
-	void SetIPLState(bool state);
-	bool GetIPLState();
+	bool GetIplState();
+	void SetIplState();
+	void SetIplState(bool state);
+
+	void RequestIpl(bool checkState);
+	void RequestIplIfNotActive();
+	
+	void RemoveIpl(bool saveState);
+	void RemoveIplIfActive();
 };
+#endif

@@ -1,21 +1,26 @@
 #include <Windows.h>
-#include "Hooking.Patterns.h"
-#include "GroupMap.h"
-#include "Water.h"
-#include "Paths.h"
 #include "Settings.h"
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <MinHook.h>
+// Misc
 #include "CDataFileMgr.h"
 #include "Events.h"
-#include "Hooking.h"
+// Patches
+#include "GroupMap.h"
 #include "DecalLimits.h"
 #include "RadioStations.h"
 #include "PopZones.h"
 #include "RockstarEditor.h"
-#include "WeaponInfo.h"
+#include "Water.h"
+#include "Paths.h"
 
+static void LoggingEnabled()
+{
+	spdlog::set_level(spdlog::level::info);
+	spdlog::set_default_logger(spdlog::basic_logger_mt("WorldTravelPatches", "WorldTravelPatches.log"));
+	spdlog::flush_every(std::chrono::seconds(5));
+}
 
 DWORD WINAPI Main()
 {
@@ -23,43 +28,40 @@ DWORD WINAPI Main()
 	
 	if (Settings::EnableLogging)
 	{
-		spdlog::set_default_logger(spdlog::basic_logger_mt("file_logger", "WorldTravelPatches.log"));
-		spdlog::flush_every(std::chrono::seconds(5));
+		LoggingEnabled();
 	}
-	else
+	else 
 	{
 		spdlog::set_level(spdlog::level::off);
 	}
 
-	spdlog::info("Main");
-
 	MH_Initialize();
 
-	events::InstallEvents();
+	Events::Install();
+	spdlog::info("Added Game Skeleton Event Hooks.");
+
+	GroupMap::Init();
+	spdlog::info("Added Group Map Hooks.");
 
 	RadioStations::Patch();
 	spdlog::info("Patched Radio Stations.");
 
 	DecalLimits::PatchDecalLimits();
 	spdlog::info("Patched Decal Limits.");
+
 	DecalLimits::fwBoxStreamerVariablePatch();
 	spdlog::info("Patched fwBoxStreamerVariable.");
 
-	PopZones::GetZonePopSchedulePatch();
-	PopZones::UpdateCurrentZoneFromCoordsPatch();
-	PopZones::UpdateCurrentZoneFromCoords2Patch();
+	PopZones::Patch();
 	spdlog::info("Patched PopZone / PopCycle.");
 
 	RockstarEditor::Patch();
 	spdlog::info("Patched Rockstar Editor.");
-	//CWeaponInfo::PatchWeapons();
-	//spdlog::info("Patched Weapon Limits.");
-	patches::water::Init();
+
+	Water::Init();
 	spdlog::info("Patched Water.");
 
 	MH_EnableHook(MH_ALL_HOOKS);
-		
-	spdlog::info("End");
 	return 1;
 }
 

@@ -1,10 +1,10 @@
 #pragma once
 #include <cstdint>
 #include <string>
-#include "Hooking.Patterns.h"
 #include <MinHook.h>
 #include "Hooking.h"
 
+// Taken from Cfx.Re https://github.com/citizenfx/fivem/blob/master/code/components/gta-streaming-five/src/PatchReplayLimits.cpp
 class RockstarEditor
 {
 public:
@@ -54,6 +54,7 @@ public:
 		hook::put<uint32_t>(hook::get_pattern("B9 22 01 00 00 48 8B D7", 1), NewBufferSize);  // CPacketExtension::CloneExt
 
 
+		// disables stupid watermark at beginning of rockstar editor render, credit to ranstar74.
 		// WatermarkRenderer::Render
 		uint8_t* renderWatermark = hook::get_pattern<uint8_t>("48 83 EC ? 8B 0D ? ? ? ? 65 48 8B 04 25 ? ? ? ? BA ? ? ? ? 48 8B 04 C8 8B 0C 02 D1 E9 F6 C1 ? 74 ? 83 3D");
 		DWORD oldProtect;

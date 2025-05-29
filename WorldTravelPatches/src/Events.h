@@ -2,22 +2,27 @@
 #include <vector>
 #include <functional>
 
-namespace events
+class Events
 {
-	class Event
-	{
-		using Callback = std::function<void(void)>;
+public:
+    class Event
+    {
+    public:
+        using Callback = std::function<void(void)>;
 
-	private:
-		std::vector<Callback> m_Callbacks;
+        void Add(const Callback& cb);
+        void Raise();
 
-	public:
-		void Add(const Callback& cb);
-		void Raise();
-	};
+    private:
+        std::vector<Callback> m_Callbacks;
+    };
 
-	void InstallEvents();
+    static void Install();
 
-	extern Event OnCorePreUpdate;
-}
+    static Event OnCorePreUpdate;
 
+private:
+    static void HookGameSkeletonUpdate();
+    static void(*gameSkeleton_RunUpdate_orig)(void* skeleton, int type);
+    static void gameSkeleton_RunUpdate_detour(void* skeleton, int type);
+};

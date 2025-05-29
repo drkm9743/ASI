@@ -3,6 +3,9 @@
 #include <stdint.h>
 #include <type_traits>
 
+#include "Hooking.Patterns.h"
+#include "Hooking.Stubs.h"
+
 /*
  * This file is part of the CitizenFX project - http://citizen.re/
  *
@@ -14,6 +17,13 @@
 
 namespace hook
 {
+	extern ptrdiff_t baseAddressDifference;
+
+	inline constexpr uintptr_t exe_end()
+	{
+		return 0x146000000;
+	}
+
 	template<typename T>
 	inline T get_call(T address)
 	{
@@ -39,6 +49,18 @@ namespace hook
 		target += ((uintptr_t)(address)+numBytesInLine);
 
 		return (T)target;
+	}
+
+	// returns the adjusted address to the stated base
+	template<typename T>
+	inline uintptr_t get_adjusted(T address)
+	{
+		if ((uintptr_t)address >= 0x140000000 && (uintptr_t)address <= exe_end())
+		{
+			return (uintptr_t)address + baseAddressDifference;
+		}
+
+		return (uintptr_t)address;
 	}
 
 	template<typename AddressType>

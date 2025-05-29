@@ -1,6 +1,8 @@
 #include "CPathFind.h"
 #include "Hooking.Patterns.h"
 
+// Unused currently
+
 uint32_t CPathFind::GetBaseIndex()
 {
 	return *(uint32_t*)((uint8_t*)this + 0x8);

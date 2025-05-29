@@ -1,57 +1,72 @@
 #include "Scenario.h"
-namespace objects
+
+using namespace std;
+
+
+
+std::string Scenario::GetScenarioName()
 {
-	namespace map
+	return scenarioName;
+}
+
+void Scenario::SetScenarioName(const std::string& scenario)
+{
+	scenarioName = scenario;
+	scenarioState = AI::IS_SCENARIO_GROUP_ENABLED((char*)scenarioName.c_str());
+}
+
+
+
+bool Scenario::GetScenarioState()
+{
+	return scenarioState;
+}
+
+void Scenario::SetScenarioState()
+{
+	scenarioState = AI::IS_SCENARIO_GROUP_ENABLED((char*)scenarioName.c_str());
+}
+
+void Scenario::SetScenarioState(bool state)
+{
+	scenarioState = state;
+}
+
+
+
+void Scenario::RequestScenario(bool checkState)
+{
+	if (checkState)
 	{
-		class Scenario
+		if (!scenarioState)
 		{
-			std::string scenarioName;
-			bool scenarioState;
+			return;
+		}
+	}
+	AI::SET_SCENARIO_GROUP_ENABLED((char*)scenarioName.c_str(), true);
+}
 
-			Scenario(std::string scenario)
-			{
-				scenarioName = scenario;
-				scenarioState = true;
-			}
+void Scenario::RequestScenarioIfNotActive()
+{
+	if (!AI::IS_SCENARIO_GROUP_ENABLED((char*)scenarioName.c_str()))
+	{
+		AI::SET_SCENARIO_GROUP_ENABLED((char*)scenarioName.c_str(), true);
+	}
+}
 
-			std::string GetScenarioName()
-			{
-				return scenarioName;
-			}
 
-			void RequestScenario(bool checkState)
-			{
-				if (checkState)
-				{
-					if (!scenarioState)
-					{
-						return;
-					}
-				}
-				AI::SET_SCENARIO_GROUP_ENABLED((char*)scenarioName.c_str(), true);
-			}
 
-			void RemoveScenario(bool saveState)
-			{
-				if (saveState)
-					SetScenarioState();
-				AI::SET_SCENARIO_GROUP_ENABLED((char*)scenarioName.c_str(), false);
-			}
+void Scenario::RemoveScenario(bool saveState)
+{
+	if (saveState)
+		SetScenarioState();
+	AI::SET_SCENARIO_GROUP_ENABLED((char*)scenarioName.c_str(), false);
+}
 
-			void SetScenarioState()
-			{
-				scenarioState = AI::IS_SCENARIO_GROUP_ENABLED((char*)scenarioName.c_str());
-			}
-
-			void SetScenarioState(bool state)
-			{
-				scenarioState = state;
-			}
-
-			bool GetScenarioState()
-			{
-				return scenarioState;
-			}
-		};
+void Scenario::RemoveScenarioIfActive()
+{
+	if (AI::IS_SCENARIO_GROUP_ENABLED((char*)scenarioName.c_str()))
+	{
+		AI::SET_SCENARIO_GROUP_ENABLED((char*)scenarioName.c_str(), false);
 	}
 }

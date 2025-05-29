@@ -5,6 +5,7 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include "..\include\main.h"
 #include "Entrances.h"
+#include "Helpers.h"
 #include "LevelSwitch.h"
 #include "Minimap.h"
 #include "Shops.h"
@@ -19,6 +20,8 @@
 #include <tlhelp32.h>
 #include "Settings.h"
 #include <fstream>
+#include "ToggleFogVolume.h"
+#include "GameVersion.h"
 
 
 //////////////////////////////////////////////////////
@@ -168,12 +171,13 @@ bool MuteGTA5Audio(bool mute)
 
 DWORD WINAPI Main()
 {
+    worldtravel::gameversion::SetGameVersion();
     Settings::Load();
 
     if (Settings::EnableLogging)
     {
         spdlog::set_level(spdlog::level::info);
-        spdlog::basic_logger_mt("WorldTravel", "WorldTravel.log");
+        spdlog::set_default_logger(spdlog::basic_logger_mt("WorldTravel", "WorldTravel.log"));
         spdlog::flush_every(std::chrono::seconds(5));
     }
     else
@@ -185,6 +189,7 @@ DWORD WINAPI Main()
     spdlog::info("Farlods Patch Done!");
     Minimap_Hooks();
     spdlog::info("Minimap Hooks Set.");
+    ToggleFogVolumeOff();
 
     return 1;
 }
@@ -197,31 +202,23 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
     if (ul_reason_for_call == DLL_PROCESS_ATTACH)
     {
         CloseHandle(CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)Main, NULL, NULL, NULL));
-    }
-    else if (ul_reason_for_call == DLL_PROCESS_DETACH)
-    {
-        spdlog::shutdown();
-    }
 
-    switch (ul_reason_for_call)
-    {
-    case DLL_PROCESS_ATTACH:
-        // Register any new scripts here
         scriptRegister(hModule, LevelSwitch);
         scriptRegister(hModule, Entrances);
+        scriptRegister(hModule, Helpers);
         scriptRegister(hModule, Minimap);
         scriptRegister(hModule, Respawn);
         scriptRegister(hModule, RespawnBlock);
         scriptRegister(hModule, RestrictedAreas);
         scriptRegister(hModule, Shops);
         keyboardHandlerRegister(OnKeyboardMessage);
-        break;
-    case DLL_PROCESS_DETACH:
+    }
+    else if (ul_reason_for_call == DLL_PROCESS_DETACH)
+    {
+        spdlog::shutdown();
         scriptUnregister(hModule);
         keyboardHandlerUnregister(OnKeyboardMessage);
-        spdlog::shutdown();
-        break;
-    default:;
     }
+
     return TRUE;
 }

@@ -15,6 +15,7 @@ namespace shops
 	// Liberty City Blip Objects
 	Blip ClukinBellAlgonquinBlip;
 	Blip ClukinBellDukesBlip;
+
 	Blip BurgerShotMemoryLanesBrokerBlip;
 	Blip BurgerShotBrokerBlip;
 	Blip BurgerShotBohanEastBlip;
@@ -23,6 +24,7 @@ namespace shops
 	Blip BurgerShotAlgonquinStarJunctionBlip;
 	Blip BurgerShotAlgonquinWestBlip;
 	Blip BurgerShotAlderneyBlip;
+
 	Blip DinerBrokerBlip;
 	Blip SuperStarCafeAlgonquinStarJunctionBlip;
 	Blip SuperStarCafeAlgonquinNorthBlip;
@@ -34,20 +36,34 @@ namespace shops
 	Blip ComradesBarBrokerBlip;
 	Blip SteinwayBeerGardenDukesBlip;
 	Blip LuckyWinklesAlgonquinBlip;
+
 	Blip UndergroundGunShopBrokerBlip;
 	Blip UndergroundGunShopAlgonquinBlip;
 	Blip UndergroundGunShopAlderneyBlip;
+
 	Blip PayNSprayBrokerBlip;
 	Blip PayNSprayAlgonquinWestBlip;
 	Blip PayNSprayAlgonquinNorthBlip;
 	Blip PayNSprayAlderneyNorthBlip;
 	Blip PayNSprayAlderneySouthBlip;
+
 	Blip ClothingStoreBrokerBlip;
 	Blip ClothingStoreAlgonquinSouthBlip;
 	Blip ClothingStoreAlgonquinEastBlip;
 	Blip ClothingStoreAlgonquinNorthBlip;
+
 	Blip TheMajesticCentralBlip;
 	Blip BankAlgonquinSouthBlip;
+
+	Blip CableCarBlip1;
+	Blip CableCarBlip2;
+
+	Blip ASCFBlip;
+	Blip SexShopBlip;
+	Blip SexShopJerseySouthBlip;
+	Blip BahamaMamasBlip;
+	Blip HonkersJerseyBlip;
+	Blip TriangleClubBlip;
 
 	//North Yankton Blip Objects
 	Blip BankNorthYanktonBlip;
@@ -135,7 +151,15 @@ namespace shops
 			{"ClothingStoreAlgonquinEast",         {ClothingStoreAlgonquinEastBlip,			{5210.4600f, -2445.9326f, 14.7133f}, "Clothing Store", 73}},
 			{"ClothingStoreAlgonquinNorth",        {ClothingStoreAlgonquinNorthBlip,		{4907.4253f, -1902.6703f, 25.6240f}, "Clothing Store", 73}},
 			{"BankAlgonquinSouth",                 {BankAlgonquinSouthBlip,					{5176.0400f, -3723.6200f, 16.8800f}, "Bank", 272}},
-			{"TheMajesticCentral",                 {TheMajesticCentralBlip,					{5022.1100f, -2659.0100f, 15.3900f}, "The Majestic", 475}}
+			{"TheMajesticCentral",                 {TheMajesticCentralBlip,					{5022.1100f, -2659.0100f, 15.3900f}, "The Majestic", 475}},
+			{"CableCar1",						   {CableCarBlip1,							{5338.0600f, -3029.4400f, 21.3600f}, "Cable Car", 36}},
+			{"CableCar2",						   {CableCarBlip2,							{5625.5900f, -3029.1800f, 14.4900f}, "Cable Car", 36}},
+			{"ASCF",					           {ASCFBlip,								{4051.2000f, -3629.7500f, 4.72000f}, "Alderney State Correctional Facility", 188}},
+			{"SexShop",					           {SexShopBlip,						    {5024.4800f, -2885.6800f, 15.4900f}, "Sex Shop", 279}},
+			{"SexShopJerseySouth",				   {SexShopJerseySouthBlip,					{5972.1600f, -3795.7300f, 9.97000f}, "Sex Shop", 279}},
+			{"BahamaMamas",					       {BahamaMamasBlip,						{4788.6000f, -2856.3600f, 15.7500f}, "Bahama Mamas", 614}},
+			{"HonkersJersey",					   {HonkersJerseyBlip,						{3615.3200f, -3247.4400f, 13.4100f}, "Honkers", 121}},
+			{"TriangleClub",					   {TriangleClubBlip,						{6368.7500f, -1562.1600f, 18.9500f}, "The Triangle Club", 121}},
 		};
 
 		// create each blip
@@ -164,21 +188,50 @@ namespace shops
 	{
 		// Define all blips
 		std::vector<Blip*> blipsLC = {
-			&ClukinBellAlgonquinBlip, &ClukinBellDukesBlip, &BurgerShotMemoryLanesBrokerBlip,
-			&BurgerShotBrokerBlip, &BurgerShotBohanEastBlip, &BurgerShotBohanWestBlip,
-			&BurgerShotAlgonquinNorthBlip, &BurgerShotAlgonquinStarJunctionBlip,
-			&BurgerShotAlgonquinWestBlip, &BurgerShotAlderneyBlip, &DinerBrokerBlip,
-			&SuperStarCafeAlgonquinStarJunctionBlip, &SuperStarCafeAlgonquinNorthBlip,
-			&HomebrewCafeBrokerBlip, &MrFuksAlderneyBlip, &TWAtBrokerBlip,
-			&TWAtAlgonquinBlip, &TWAtAlderneyBlip, &ComradesBarBrokerBlip,
-			&SteinwayBeerGardenDukesBlip, &LuckyWinklesAlgonquinBlip,
-			&UndergroundGunShopBrokerBlip, &UndergroundGunShopAlgonquinBlip,
-			&UndergroundGunShopAlderneyBlip, &PayNSprayBrokerBlip,
-			&PayNSprayAlgonquinWestBlip, &PayNSprayAlgonquinNorthBlip,
-			&PayNSprayAlderneyNorthBlip, &PayNSprayAlderneySouthBlip,
-			&ClothingStoreBrokerBlip, &ClothingStoreAlgonquinSouthBlip,
-			&ClothingStoreAlgonquinEastBlip, &ClothingStoreAlgonquinNorthBlip,
-			&BankAlgonquinSouthBlip, &TheMajesticCentralBlip
+			&ClukinBellAlgonquinBlip,
+			&ClukinBellDukesBlip,
+			&BurgerShotMemoryLanesBrokerBlip,
+			&BurgerShotBrokerBlip,
+			&BurgerShotBohanEastBlip,
+			&BurgerShotBohanWestBlip,
+			&BurgerShotAlgonquinNorthBlip,
+			&BurgerShotAlgonquinStarJunctionBlip,
+			&BurgerShotAlgonquinWestBlip,
+			&BurgerShotAlderneyBlip,
+			&DinerBrokerBlip,
+			&SuperStarCafeAlgonquinStarJunctionBlip,
+			&SuperStarCafeAlgonquinNorthBlip,
+			&HomebrewCafeBrokerBlip,
+			&MrFuksAlderneyBlip,
+			&TWAtBrokerBlip,
+			&TWAtAlgonquinBlip,
+			&TWAtAlderneyBlip,
+			&ComradesBarBrokerBlip,
+			&SteinwayBeerGardenDukesBlip, 
+			&LuckyWinklesAlgonquinBlip,
+			&UndergroundGunShopBrokerBlip,
+			&UndergroundGunShopAlgonquinBlip,
+			&UndergroundGunShopAlderneyBlip, 
+			&PayNSprayBrokerBlip,
+			&PayNSprayAlgonquinWestBlip,
+			&PayNSprayAlgonquinNorthBlip,
+			&PayNSprayAlderneyNorthBlip, 
+			&PayNSprayAlderneySouthBlip,
+			&ClothingStoreBrokerBlip, 
+			&ClothingStoreAlgonquinSouthBlip,
+			&ClothingStoreAlgonquinEastBlip, 
+			&ClothingStoreAlgonquinNorthBlip,
+			&BankAlgonquinSouthBlip, 
+			&TheMajesticCentralBlip,
+			&CableCarBlip1, 
+			&CableCarBlip2,
+			&ASCFBlip,
+			&SexShopBlip,
+			&BahamaMamasBlip,
+			&HonkersJerseyBlip,
+			&TriangleClubBlip,
+			&SexShopJerseySouthBlip,
+
 		};
 
 		std::vector<Blip*> blipsNY = {

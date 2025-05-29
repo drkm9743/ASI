@@ -6,6 +6,7 @@
 #include "..\dependencies\include\enums.h"
 #include "..\include\main.h"
 #include "PlayerLocation.h"
+#include "GameVersion.h"
 
 
 void Minimap();

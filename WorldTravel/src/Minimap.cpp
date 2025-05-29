@@ -14,17 +14,26 @@ namespace minimap
 	// Radar Coords
 	std::vector<float> LibertyCityGFXPos = { 5490.0f, -2697.0f, 0.0f };
 
+	bool IsPlayerInsideInterior()
+	{
+		Ped PlayerPed = PLAYER::PLAYER_PED_ID();
+		int InteriorID = INTERIOR::GET_INTERIOR_FROM_ENTITY(PlayerPed);
+
+		if (InteriorID != 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	static void CreateMinimap()
 	{
 		if (worldtravel::IsLibertyCity())
 		{
-			/*if (INTERIOR::GET_INTERIOR_FROM_ENTITY(PLAYER::PLAYER_PED_ID()) == INTERIOR::GET_INTERIOR_AT_COORDS(4797.335f, -2851.378f, 5.098513f)) // e2_gayclub
-			{
-				return;
-			}*/
-
-			UI::SET_RADAR_AS_EXTERIOR_THIS_FRAME();
-			UI::SET_RADAR_AS_INTERIOR_THIS_FRAME(GAMEPLAY::GET_HASH_KEY("v_fakelibertycity"), LibertyCityGFXPos[0], LibertyCityGFXPos[1], 0, 0);
+			UI::SET_MINIMAP_COMPONENT(14, true, -1);
 		}
 
 	}
@@ -33,7 +42,7 @@ namespace minimap
 	{
 		while (true)
 		{
-			CreateMinimap();
+			//CreateMinimap();
 			WAIT(0);
 		}
 	}
@@ -44,29 +53,50 @@ namespace minimap
 static void (*gImpl_CMiniMap_RenderThread__RenderBitmaps)();
 static void lcImpl_CMiniMap_RenderThread__RenderBitmaps()
 {
-	if (!worldtravel::IsLibertyCity())
-		gImpl_CMiniMap_RenderThread__RenderBitmaps();
+	if (worldtravel::gameversion::GetGameVersion())
+	{
+
+	}
+	else
+	{
+		if (worldtravel::IsLosSantos() || worldtravel::IsNorthYankton() || worldtravel::IsCayoPerico())
+			gImpl_CMiniMap_RenderThread__RenderBitmaps();
+	}
 }
 
 static void (*gImpl_CSupertiles__Render)(void* self);
 static void lcImpl_CSupertiles__Render(void* self)
 {
-	if (!worldtravel::IsLibertyCity())
-		gImpl_CSupertiles__Render(self);
+	if (worldtravel::gameversion::GetGameVersion())
+	{
+
+	}
+	else
+	{
+		if (worldtravel::IsLosSantos() || worldtravel::IsNorthYankton() || worldtravel::IsCayoPerico())
+			gImpl_CSupertiles__Render(self);
+	}
 }
 
 void Minimap_Hooks()
 {
+	if (worldtravel::gameversion::GetGameVersion())
 	{
-		auto location = hook::get_pattern("48 8B C4 55 53 56 57 41 56 41 57 48 8D 68 ? 48 81 EC B8 00 00 00");
-		MH_CreateHook(location, lcImpl_CMiniMap_RenderThread__RenderBitmaps, (void**)&gImpl_CMiniMap_RenderThread__RenderBitmaps);
-		MH_EnableHook(location);
-	}
 
+	}
+	else
 	{
-		auto location = hook::get_pattern("48 8B C4 48 89 58 ? 48 89 68 ? 48 89 70 ? 48 89 78 ? 41 56 48 83 EC 20 4C 8B F1 33 DB");
-		MH_CreateHook(location, lcImpl_CSupertiles__Render, (void**)&gImpl_CSupertiles__Render);
-		MH_EnableHook(location);
+		{
+			auto location = hook::get_pattern("48 8B C4 55 53 56 57 41 56 41 57 48 8D 68 ? 48 81 EC B8 00 00 00");
+			MH_CreateHook(location, lcImpl_CMiniMap_RenderThread__RenderBitmaps, (void**)&gImpl_CMiniMap_RenderThread__RenderBitmaps);
+			MH_EnableHook(location);
+		}
+
+		{
+			auto location = hook::get_pattern("48 8B C4 48 89 58 ? 48 89 68 ? 48 89 70 ? 48 89 78 ? 41 56 48 83 EC 20 4C 8B F1 33 DB");
+			MH_CreateHook(location, lcImpl_CSupertiles__Render, (void**)&gImpl_CSupertiles__Render);
+			MH_EnableHook(location);
+		}
 	}
 }
 

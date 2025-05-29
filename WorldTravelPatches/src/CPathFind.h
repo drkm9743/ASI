@@ -1,6 +1,8 @@
 #pragma once
 #include <stdint.h>
 
+// Unused currently
+
 class CPathFind
 {
 public:

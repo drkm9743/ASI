@@ -13,4 +13,5 @@ namespace worldtravel {
 	bool IsLibertyCity();
 	bool IsNorthYankton();
 	bool IsCayoPerico();
+	bool IsSantaFuegos();
 }

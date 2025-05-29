@@ -161,6 +161,8 @@ namespace entrances
                 {"GayTonyPenthouseApartment",           {{5117.27f, -3455.19f,  32.80f}, 100.34f}},
                 {"YusufAmierPenthouseGround",           {{5158.64f, -2463.73f,  14.95f},   90.0f}},
                 {"YusufAmierPenthouseApartment",        {{5178.48f, -2458.44f,  62.80f},    0.0f}},
+                {"CorporateTowerElevatorLobby",         {{5109.59f, -3200.96f, 14.800f},  270.0f}},
+                {"CorporateTowerElevatorOffice",        {{5098.34f, -3199.64f,  76.00f},  270.0f}},
             };
 
             // Liberty City marker configurations
@@ -218,6 +220,12 @@ namespace entrances
 
                 {"Press ~INPUT_CONTEXT~ to take the lift to the ground.",
                  locationsLC["YusufAmierPenthouseApartment"], locationsLC["YusufAmierPenthouseGround"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
+
+                {"Press ~INPUT_CONTEXT~ to take the lift to the office floor.",
+                 locationsLC["CorporateTowerElevatorLobby"], locationsLC["CorporateTowerElevatorOffice"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
+
+                {"Press ~INPUT_CONTEXT~ to take the lift to the lobby.",
+                 locationsLC["CorporateTowerElevatorOffice"], locationsLC["CorporateTowerElevatorLobby"], -1.0f, 0.6f, 0.5f, 1.0f, false, false},
             };
             SpawnMarkers(locationsLC, markersLC);
         }

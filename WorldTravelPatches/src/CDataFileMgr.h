@@ -243,10 +243,10 @@ public:
 	enum InstallPartition : uint32_t
 	{
 		PARTITION_NONE  = 4294967295, // 0xDD4E11A8
-		PARTITION_0     = 0,  // 0x520B3F7A
-		PARTITION_1     = 1,  // 0x9C42D3E8
-		PARTITION_2     = 2,  // 0xAD997695
-		PARTITION_MAX   = 3,  // 0xACD2BF9A
+		PARTITION_0     = 0,		  // 0x520B3F7A
+		PARTITION_1     = 1,		  // 0x9C42D3E8
+		PARTITION_2     = 2,		  // 0xAD997695
+		PARTITION_MAX   = 3,	      // 0xACD2BF9A
 	};
 
 	struct DataFile

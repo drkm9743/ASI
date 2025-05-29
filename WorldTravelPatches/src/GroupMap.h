@@ -1,6 +1,7 @@
 #pragma once
 
-namespace patches {
-namespace groupmap {
-	void Init();
-} }
+class GroupMap
+{
+public:
+    static void Init();
+};

@@ -1,6 +1,7 @@
 #include "Farlods.h"
 #include "Hooking.Patterns.h"
 #include <MinHook.h>
+#include "GameVersion.h"
 
 namespace patches {
 	namespace farlods {
@@ -40,6 +41,12 @@ namespace patches {
 
 		void Farlods_Shutdown_Hook(Farlods* farlods, int skelFuncType)
 		{
+			//Delete this if statement when Enhanced pattern is updated
+			if (worldtravel::gameversion::GetGameVersion())
+			{
+				return;
+			}
+
 			if (!g_visible)
 			{
 				// restore count to avoid memory leaks
@@ -51,13 +58,20 @@ namespace patches {
 
 		void Init()
 		{
-			uintptr_t addr = (uintptr_t)hook::get_pattern("48 8D 0D ? ? ? ? 89 44 24 38 89 44 24 30 89 44 24 28", 3); // CHorizonObjects::Render
-			addr = addr + *(int*)addr + 4;
-			g_Farlods = (Farlods*)addr;
+			if (worldtravel::gameversion::GetGameVersion()) // Enhanced
+			{
 
-			MH_Initialize();
-			MH_CreateHook(hook::get_pattern("83 FA 01 0F 85 ? ? ? ? 48 89 5C 24 ? 48 89 74 24"), Farlods_Shutdown_Hook, (void**)&g_origFarlodsShutdown); // CHorizonObjects::Shutdown
-			MH_EnableHook(MH_ALL_HOOKS);
+			}
+			else // Legacy
+			{
+				uintptr_t addr = (uintptr_t)hook::get_pattern("48 8D 0D ? ? ? ? 89 44 24 38 89 44 24 30 89 44 24 28", 3); // CHorizonObjects::Render
+				addr = addr + *(int*)addr + 4;
+				g_Farlods = (Farlods*)addr;
+
+				MH_Initialize();
+				MH_CreateHook(hook::get_pattern("83 FA 01 0F 85 ? ? ? ? 48 89 5C 24 ? 48 89 74 24"), Farlods_Shutdown_Hook, (void**)&g_origFarlodsShutdown); // CHorizonObjects::Shutdown
+				MH_EnableHook(MH_ALL_HOOKS);
+			}
 		}
 
 		void SetVisible(bool visible)
@@ -68,6 +82,13 @@ namespace patches {
 			}
 
 			g_visible = visible;
+
+			//Delete this if statement when Enhanced pattern is updated
+			if (worldtravel::gameversion::GetGameVersion())
+			{
+				return;
+			}
+			
 			if (g_visible)
 			{
 				g_Farlods->m_Drawables.Count = g_origDrawablesCount;

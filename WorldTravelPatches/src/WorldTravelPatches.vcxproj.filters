@@ -3,30 +3,12 @@
   <ItemGroup>
     <ClCompile Include="LC.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Water.cpp">
-      <Filter>patches</Filter>
-    </ClCompile>
-    <ClCompile Include="GroupMap.cpp">
-      <Filter>patches</Filter>
-    </ClCompile>
     <ClCompile Include="Settings.cpp" />
-    <ClCompile Include="Paths.cpp">
-      <Filter>patches</Filter>
-    </ClCompile>
-    <ClCompile Include="CWaterData.cpp">
-      <Filter>expanded features</Filter>
-    </ClCompile>
     <ClCompile Include="Hooking.cpp">
       <Filter>hooking</Filter>
     </ClCompile>
     <ClCompile Include="Hooking.Patterns.cpp">
       <Filter>hooking</Filter>
-    </ClCompile>
-    <ClCompile Include="CDataFileMgr.cpp">
-      <Filter>misc</Filter>
-    </ClCompile>
-    <ClCompile Include="CPathFind.cpp">
-      <Filter>misc</Filter>
     </ClCompile>
     <ClCompile Include="Events.cpp">
       <Filter>misc</Filter>
@@ -34,39 +16,30 @@
     <ClCompile Include="UsingAllocator.cpp">
       <Filter>misc</Filter>
     </ClCompile>
+    <ClCompile Include="Hooking.Stubs.cpp">
+      <Filter>hooking</Filter>
+    </ClCompile>
+    <ClCompile Include="CPathFind.cpp">
+      <Filter>misc\paths</Filter>
+    </ClCompile>
+    <ClCompile Include="Paths.cpp">
+      <Filter>misc\paths</Filter>
+    </ClCompile>
+    <ClCompile Include="CDataFileMgr.cpp">
+      <Filter>patches</Filter>
+    </ClCompile>
+    <ClCompile Include="GroupMap.cpp">
+      <Filter>misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Water.cpp">
+      <Filter>patches\water</Filter>
+    </ClCompile>
+    <ClCompile Include="CWaterData.cpp">
+      <Filter>patches\water</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Water.h">
-      <Filter>patches</Filter>
-    </ClInclude>
-    <ClInclude Include="GroupMap.h">
-      <Filter>patches</Filter>
-    </ClInclude>
     <ClInclude Include="Settings.h" />
-    <ClInclude Include="Paths.h">
-      <Filter>patches</Filter>
-    </ClInclude>
-    <ClInclude Include="CWaterData.h">
-      <Filter>expanded features</Filter>
-    </ClInclude>
-    <ClInclude Include="eWaterArea.h">
-      <Filter>expanded features</Filter>
-    </ClInclude>
-    <ClInclude Include="CWaterTune.h">
-      <Filter>expanded features</Filter>
-    </ClInclude>
-    <ClInclude Include="DecalLimits.h">
-      <Filter>patches</Filter>
-    </ClInclude>
-    <ClInclude Include="RadioStations.h">
-      <Filter>patches</Filter>
-    </ClInclude>
-    <ClInclude Include="PopZones.h">
-      <Filter>patches</Filter>
-    </ClInclude>
-    <ClInclude Include="RockstarEditor.h">
-      <Filter>patches</Filter>
-    </ClInclude>
     <ClInclude Include="Hooking.h">
       <Filter>hooking</Filter>
     </ClInclude>
@@ -74,12 +47,6 @@
       <Filter>hooking</Filter>
     </ClInclude>
     <ClInclude Include="atArray.h">
-      <Filter>misc</Filter>
-    </ClInclude>
-    <ClInclude Include="CDataFileMgr.h">
-      <Filter>misc</Filter>
-    </ClInclude>
-    <ClInclude Include="CPathFind.h">
       <Filter>misc</Filter>
     </ClInclude>
     <ClInclude Include="Events.h">
@@ -94,22 +61,64 @@
     <ClInclude Include="UsingAllocator.h">
       <Filter>misc</Filter>
     </ClInclude>
-    <ClInclude Include="WeaponInfo.h">
+    <ClInclude Include="Hooking.Stubs.h">
+      <Filter>hooking</Filter>
+    </ClInclude>
+    <ClInclude Include="CPathFind.h">
+      <Filter>misc\paths</Filter>
+    </ClInclude>
+    <ClInclude Include="Paths.h">
+      <Filter>misc\paths</Filter>
+    </ClInclude>
+    <ClInclude Include="CDataFileMgr.h">
       <Filter>patches</Filter>
+    </ClInclude>
+    <ClInclude Include="DecalLimits.h">
+      <Filter>patches\Limit Increases</Filter>
+    </ClInclude>
+    <ClInclude Include="PopZones.h">
+      <Filter>patches\Limit Increases</Filter>
+    </ClInclude>
+    <ClInclude Include="RadioStations.h">
+      <Filter>patches\Limit Increases</Filter>
+    </ClInclude>
+    <ClInclude Include="RockstarEditor.h">
+      <Filter>patches\Limit Increases</Filter>
+    </ClInclude>
+    <ClInclude Include="GroupMap.h">
+      <Filter>misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Water.h">
+      <Filter>patches\water</Filter>
+    </ClInclude>
+    <ClInclude Include="CWaterData.h">
+      <Filter>patches\water</Filter>
+    </ClInclude>
+    <ClInclude Include="CWaterTune.h">
+      <Filter>patches\water</Filter>
+    </ClInclude>
+    <ClInclude Include="eWaterArea.h">
+      <Filter>patches\water</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="patches">
       <UniqueIdentifier>{cdf43ec4-d752-45f2-889f-c57c7bdeaadc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="expanded features">
-      <UniqueIdentifier>{ed020914-d33d-43ad-a5e7-8e9823624262}</UniqueIdentifier>
-    </Filter>
     <Filter Include="hooking">
       <UniqueIdentifier>{b5810f36-c6ad-47ca-8105-4729ded7b8f7}</UniqueIdentifier>
     </Filter>
     <Filter Include="misc">
       <UniqueIdentifier>{9ea94fff-63b8-4af1-a6ed-5768661586ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="misc\paths">
+      <UniqueIdentifier>{f237b675-a31b-4054-ab85-e926c3d2766a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="patches\Limit Increases">
+      <UniqueIdentifier>{b01091d8-8dac-4a91-a66a-6a77145ec8c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="patches\water">
+      <UniqueIdentifier>{38834cd9-6011-478f-bb9e-8fe94db8e795}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
