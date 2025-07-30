@@ -86,6 +86,9 @@ void Minimap_Hooks()
 	}
 	else
 	{
+		InitMinimapComponentControl();
+		RegisterMinimapNatives();
+
 		{
 			auto location = hook::get_pattern("48 8B C4 55 53 56 57 41 56 41 57 48 8D 68 ? 48 81 EC B8 00 00 00");
 			MH_CreateHook(location, lcImpl_CMiniMap_RenderThread__RenderBitmaps, (void**)&gImpl_CMiniMap_RenderThread__RenderBitmaps);
@@ -99,6 +102,7 @@ void Minimap_Hooks()
 		}
 	}
 }
+
 
 void Minimap()
 {
